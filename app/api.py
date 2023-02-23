@@ -40,7 +40,7 @@ def get_app() -> FastAPI:
     description = """Сервис, реализующий Голосового помощника Hack-Bit"""
 
     application = FastAPI(
-        title="Bit Hack",
+        title="medvezhiy-ugol",
         description=description,
         docs_url="/swagger",
         openapi_url="/openapi",

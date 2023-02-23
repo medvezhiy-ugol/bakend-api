@@ -16,7 +16,7 @@ class DefaultSettings(BaseSettings):
     APP_HOST: str = environ.get("APP_HOST", "http://0.0.0.0")
     APP_PORT: int = int(environ.get("APP_PORT", 8080))
 
-    DB_NAME: str = environ.get("DB_NAME", "hack_bit")
+    DB_NAME: str = environ.get("DB_NAME", "medvezhiy-ugol")
     DB_PATH: str = environ.get("DB_PATH", "localhost")
     DB_USER: str = environ.get("DB_USER", "postgres")
     DB_PORT: int = int(environ.get("DB_PORT", 5432))

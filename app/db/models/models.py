@@ -12,7 +12,6 @@ from sqlalchemy.dialects.postgresql import (
     TEXT
 )
 from sqlalchemy.types import DateTime as sqlalchemy_DateTime
-import datetime
 import uuid
 from sqlalchemy.orm import declarative_base
 from enum import Enum
@@ -71,4 +70,10 @@ class UserRoulette(DeclarativeBase):
         UUID,
         ForeignKey(Roulette.id, ondelete="CASCADE"),
         nullable=False,
+    )
+
+    is_winner = Column(
+        "is_winner",
+        BOOLEAN,
+        nullable=True,
     )

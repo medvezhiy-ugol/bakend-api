@@ -12,7 +12,6 @@ from sqlalchemy.dialects.postgresql import (
     TEXT
 )
 from sqlalchemy.types import DateTime as sqlalchemy_DateTime
-import datetime
 import uuid
 from sqlalchemy.orm import declarative_base
 from enum import Enum
@@ -49,7 +48,32 @@ class Roulette(DeclarativeBase):
 
     start = Column("start", sqlalchemy_DateTime(timezone=True), nullable=False)
     end = Column("end", sqlalchemy_DateTime(timezone=True), nullable=False)
-    
     score = Column("score", INTEGER, nullable=False)
-    
     winners_count = Column("winners_count", INTEGER, nullable=False)
+
+
+class UserRoulette(DeclarativeBase):
+    
+    __tablename__ = "userroulette"
+
+    id = Column(UUID, unique=True, primary_key=True, default=lambda: str(uuid.uuid4()))
+
+    user_id = Column(
+        "user_id",
+        UUID,
+        ForeignKey(Users.id, ondelete="CASCADE"),
+        nullable=False,
+    )
+
+    roulette_id = Column(
+        "roulette_id",
+        UUID,
+        ForeignKey(Roulette.id, ondelete="CASCADE"),
+        nullable=False,
+    )
+
+    is_winner = Column(
+        "is_winner",
+        BOOLEAN,
+        nullable=True,
+    )

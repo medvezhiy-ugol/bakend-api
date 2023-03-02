@@ -8,7 +8,12 @@ from sqlalchemy.dialects.postgresql import (
     TIMESTAMP,
     VARCHAR,
     FLOAT,
+    UUID,
+    TEXT
 )
+from sqlalchemy.types import DateTime as sqlalchemy_DateTime
+import datetime
+import uuid
 from sqlalchemy.orm import declarative_base
 from enum import Enum
 from app.db import convention
@@ -26,11 +31,25 @@ class User_type(Enum):
 class Users(DeclarativeBase):
     __tablename__ = "users"
 
-    id = Column(
-        "id", INTEGER, primary_key=True, unique=True, autoincrement=True, nullable=False
-    )
+    id = Column(UUID, unique=True, primary_key=True, default=lambda: str(uuid.uuid4()))
     nickname = Column("nickname", VARCHAR(30), nullable=False)
     name = Column("name", VARCHAR(15), nullable=False)
     user_type = Column("user_type", VARCHAR(15), nullable=False)
     surname = Column("surname", VARCHAR(20), nullable=False)
     phone = Column("phone", CHAR(12), nullable=False)
+
+
+class Roulette(DeclarativeBase):
+
+    __tablename__ = "roulette"
+
+    id = Column(UUID, unique=True, primary_key=True, default=lambda: str(uuid.uuid4()))
+
+    title = Column("title", TEXT, nullable=False)
+
+    start = Column("start", sqlalchemy_DateTime(timezone=True), nullable=False)
+    end = Column("end", sqlalchemy_DateTime(timezone=True), nullable=False)
+    
+    score = Column("score", INTEGER, nullable=False)
+    
+    winners_count = Column("winners_count", INTEGER, nullable=False)

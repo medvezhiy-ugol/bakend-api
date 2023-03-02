@@ -15,3 +15,4 @@ env
 data/
 .idea
 .pytest_cache
+test2env/

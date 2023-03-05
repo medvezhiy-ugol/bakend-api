@@ -1,0 +1,18 @@
+{
+    "correlationId": "6363034d-ca9c-415d-a65a-f30cc00c3a88",
+    "terminalGroups": [
+        {
+            "organizationId": "df66facb-ba7e-4752-be86-afc034dbeaa5",
+            "items": [
+                {
+                    "id": "6281df49-89d1-0003-0186-6db89d990064",
+                    "organizationId": "df66facb-ba7e-4752-be86-afc034dbeaa5",
+                    "name": "Основная группа",
+                    "address": "",
+                    "timeZone": "00:00:00"
+                }
+            ]
+        }
+    ],
+    "terminalGroupsInSleep": []
+}

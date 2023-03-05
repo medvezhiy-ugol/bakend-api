@@ -1,0 +1,29 @@
+{
+    "correlationId": "3905b5f5-9b1f-477b-b55d-49c365237c36",
+    "groups": [],
+    "productCategories": [
+        {
+            "id": "6281df49-89d1-0003-0186-6ddae4348a1a",
+            "name": "ррпоро",
+            "isDeleted": true
+        },
+        {
+            "id": "6281df49-89d1-0003-0186-6ddae434908b",
+            "name": "На перекус",
+            "isDeleted": false
+        },
+        {
+            "id": "6281df49-89d1-0003-0186-6ddae434908a",
+            "name": "Алкогольное (не пиво)",
+            "isDeleted": false
+        },
+        {
+            "id": "6281df49-89d1-0003-0186-6ddae434908e",
+            "name": "Алкогольное (пиво)",
+            "isDeleted": false
+        }
+    ],
+    "products": [],
+    "sizes": [],
+    "revision": 1676879088957
+}

@@ -1,5 +1,18 @@
 version: '3.7'
 services:
+  mongodb:
+    container_name: "mongodb"
+    image: mongo:4.4
+    hostname: mongodb
+    restart: always
+    volumes:
+      - ./app/migrations/mongo:/docker-entrypoint-initdb.d/
+    environment:
+      - MONGO_USER=aboba
+      - MONGO_PASSWORD=aboba
+      - MONGO_DATABASE=medvezhiy-ugol
+    ports:
+      - 27017:27017
   db:
     image: postgres
     ports:
@@ -19,6 +32,7 @@ services:
       - "80:80"
     depends_on:
       - db
+      - mongodb
     environment:
       - DATABASE_URL=postgresql://postgres:postgres@db:5432/medvezhiy-ugol
       - SERVER_PORT=80

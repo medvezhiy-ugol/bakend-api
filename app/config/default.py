@@ -3,7 +3,7 @@ from os import environ
 from pydantic import BaseSettings
 
 
-class DefaultSettings(BaseSettings):
+class SDefaultSettings(BaseSettings):
     """
     Default configs for application.
 
@@ -30,7 +30,8 @@ class DefaultSettings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = int(
         environ.get("ACCESS_TOKEN_EXPIRE_MINUTES", 100000)
     )
-
+    DB_MONGO: str = environ.get("MONGODB", "mongodb://aboba:aboba@27017")
+        
     @property
     def database_settings(self) -> dict:
         """

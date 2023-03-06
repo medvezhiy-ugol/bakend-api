@@ -1,6 +1,8 @@
 from os import environ
 
 from pydantic import BaseSettings
+from dotenv import load_dotenv
+load_dotenv("local.env")
 
 
 class DefaultSettings(BaseSettings):
@@ -49,6 +51,7 @@ class DefaultSettings(BaseSettings):
     URL_TOKEN: str = environ.get("IIKO_TOKEN")
     URL_TERMINAL: str = environ.get("IIKO_TERMINAL")
     URL_ORGANIZATIONS: str = environ.get("IIKO_ORGANIZTION")
+    URL_ORDER: str = environ.get("IIKO_ORDER")
     
     
     @property

@@ -13,6 +13,7 @@ class IIko:
         self.url_token = settings.URL_TOKEN
         self.url_orgs = settings.URL_ORGANIZATIONS
         self.url_term = settings.URL_TERMINAL
+        self.url_order = settings.URL_ORDER
 
 
     def __new__(cls):
@@ -22,7 +23,7 @@ class IIko:
     
     
     async def take_menu(self, token: str, **data: Dict) -> Dict:
-        url = self.url_base + self.take_menu
+        url = self.url_base + self.url_menu
         data = {
                 "organizationIds": ["df66facb-ba7e-4752-be86-afc034dbeaa5"],
                 "externalMenuId": "9583"
@@ -38,7 +39,7 @@ class IIko:
 
 
     async def take_terminal(self, token: str, **data: Dict) -> Dict:
-        url = self.url_base + self.take_terminal
+        url = self.url_base + self.url_term
         data = {
                 "organizationIds": ["df66facb-ba7e-4752-be86-afc034dbeaa5"],
                 "includeDisabled": True
@@ -53,7 +54,7 @@ class IIko:
             return resp
     
     async def create_order(self, token: str, **data: Dict)-> Dict:
-        url = self.url_base + self.create_order
+        url = self.url_base + self.url_order
         headers = headers = {"Authorization": f"Bearer {token}"}
         async with httpx.AsyncClient() as client:
             response = await client.post(url,

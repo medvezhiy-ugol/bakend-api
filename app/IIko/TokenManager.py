@@ -13,8 +13,8 @@ class TokenManager:
     def __init__(self) -> None:
         self.time_create = perf_counter()
         settings = DefaultSettings()
-        self.url_iiko = settings.URL_BASE
-        self.url_token = settings.URL_TOKEN
+        self.url_iiko = 'https://api-ru.iiko.services/'
+        self.url_token = 'api/1/access_token'
         self.api_login = settings.API_LOGIN
         self.loop = asyncio.new_event_loop()
         self.loop.run_until_complete(self.refresh())

@@ -7,13 +7,11 @@ from app.config import DefaultSettings
 class IIko:
 
     def __init__(self) -> None:
-        settings = DefaultSettings()
-        self.url_base = settings.URL_BASE
-        self.url_menu = settings.URL_MENU
-        self.url_token = settings.URL_TOKEN
-        self.url_orgs = settings.URL_ORGANIZATIONS
-        self.url_term = settings.URL_TERMINAL
-        self.url_order = settings.URL_ORDER
+        self.url_base = 'https://api-ru.iiko.services/'
+        self.url_menu = 'api/2/menu/by_id'
+        self.url_orgs = 'api/1/organizations'
+        self.url_term = 'api/1/terminal_groups'
+        self.url_order = 'api/1/order/create'
 
 
     def __new__(cls):

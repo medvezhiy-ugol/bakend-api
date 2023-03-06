@@ -46,12 +46,6 @@ class DefaultSettings(BaseSettings):
     
     # IIKO Settings
     API_LOGIN: str = environ.get("API_LOGIN")
-    URL_BASE: str =  environ.get("IIKO_BASE")
-    URL_MENU: str = environ.get("IIKO_MENU")
-    URL_TOKEN: str = environ.get("IIKO_TOKEN")
-    URL_TERMINAL: str = environ.get("IIKO_TERMINAL")
-    URL_ORGANIZATIONS: str = environ.get("IIKO_ORGANIZTION")
-    URL_ORDER: str = environ.get("IIKO_ORDER")
     
     
     @property

@@ -6,7 +6,7 @@ services:
     hostname: mongodb
     restart: always
     volumes:
-      - ./app/migrations/mongo:/docker-entrypoint-initdb.d/
+      - ./data/db/
     environment:
       - MONGO_USER=aboba
       - MONGO_PASSWORD=aboba

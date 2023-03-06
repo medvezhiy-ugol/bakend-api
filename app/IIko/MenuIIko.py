@@ -1,7 +1,7 @@
 import httpx
 from app.schemas.exception import IIkoServerExeption
 from typing import Dict
-from app.config import DefaultSettings
+from app.schemas.terminal import TerminalModel
 
 
 class IIko:
@@ -36,16 +36,12 @@ class IIko:
             return resp
 
 
-    async def take_terminal(self, token: str, **data: Dict) -> Dict:
+    async def take_terminal(self, token: str, data: TerminalModel) -> Dict:
         url = self.url_base + self.url_term
-        data = {
-                "organizationIds": ["df66facb-ba7e-4752-be86-afc034dbeaa5"],
-                "includeDisabled": True
-        }
         headers = headers = {"Authorization": f"Bearer {token}"}
         async with httpx.AsyncClient() as client:
             response = await client.post(url,
-                                         json=data, timeout=10.0,headers=headers)
+                                         json=data.json(), timeout=10.0,headers=headers)
             if response.status_code != 200:
                 raise IIkoServerExeption(error=response.text)
             resp = response.json()

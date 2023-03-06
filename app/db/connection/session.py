@@ -48,9 +48,7 @@ class MongoManager:
     """
 
     def get_async_client(self) -> AsyncIOMotorClient:
-        return AsyncIOMotorClient(
-            get_settings().DB_MONGOS
-        )
+        return AsyncIOMotorClient(get_settings().database_mongo)
 
 
 

@@ -8,18 +8,17 @@ from app.db.connection import get_mongo_session
 
 
 
-menu_router = APIRouter(tags=["Menu"])
+terminal_router = APIRouter(tags=["Terminal"])
 
 
-@menu_router.get("/menu",
+@terminal_router.get("/terminal",
     status_code=status.HTTP_200_OK)
-async def get_menu(session_mongo: AsyncIOMotorClientSession = Depends(get_mongo_session)):
-    menu = await get_menu_mongo(session_mongo)
-    menu[0].pop("_id") # УДаляю ObjectID так как он не serializeb
-    return JSONResponse(menu[0])
+async def get_all_terminals(token: str = Depends(get_token_iiko)):
+    terminals = await IIko().take_terminal(token)
+    return terminals
 
 
-@menu_router.post("/menu",
+@terminal_router.post("/terminal",
                   status_code=status.HTTP_200_OK)
 async def take_menu(token: str = Depends(get_token_iiko),
                     session_mdb:AsyncIOMotorClientSession = Depends(get_mongo_session)):
@@ -27,4 +26,3 @@ async def take_menu(token: str = Depends(get_token_iiko),
     new_menu = await menu.take_menu(token)
     await WriteMenu(new_menu,session_mdb)
     return new_menu
-

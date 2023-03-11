@@ -12,6 +12,7 @@ class IIko:
         self.url_orgs = 'api/1/organizations'
         self.url_term = 'api/1/terminal_groups'
         self.url_order = 'api/1/order/create'
+        self.url_menu_id = 'api/2/menu'
 
 
     def __new__(cls):
@@ -20,13 +21,23 @@ class IIko:
         return cls.instance
     
     
-    async def take_menu(self, token: str, **data: Dict) -> Dict:
+    async def take_info_menu(self, token: str) -> Dict:
+        url = self.url_base + self.url_menu_id
+        headers = {"Authorization": f"Bearer {token}"}
+        async with httpx.AsyncClient() as client:
+            response = await client.post(url,timeout=10.0,headers=headers)
+            if response.status_code != 200:
+                raise IIkoServerExeption(error=response.text)
+            resp = response.json()
+            return resp
+    
+    async def take_menu_byid(self, token: str, **data: Dict) -> Dict:
         url = self.url_base + self.url_menu
         data = {
                 "organizationIds": ["df66facb-ba7e-4752-be86-afc034dbeaa5"],
                 "externalMenuId": "9583"
         }
-        headers = headers = {"Authorization": f"Bearer {token}"}
+        headers = {"Authorization": f"Bearer {token}"}
         async with httpx.AsyncClient() as client:
             response = await client.post(url,
                                          json=data, timeout=10.0,headers=headers)
@@ -38,7 +49,7 @@ class IIko:
 
     async def take_terminal(self, token: str, data: TerminalModel) -> Dict:
         url = self.url_base + self.url_term
-        headers = headers = {"Authorization": f"Bearer {token}"}
+        headers = {"Authorization": f"Bearer {token}"}
         async with httpx.AsyncClient() as client:
             response = await client.post(url,
                                          json=data.json(), timeout=10.0,headers=headers)
@@ -49,7 +60,7 @@ class IIko:
     
     async def create_order(self, token: str, **data: Dict)-> Dict:
         url = self.url_base + self.url_order
-        headers = headers = {"Authorization": f"Bearer {token}"}
+        headers = {"Authorization": f"Bearer {token}"}
         async with httpx.AsyncClient() as client:
             response = await client.post(url,
                                          json=data, timeout=10.0,headers=headers)
@@ -62,7 +73,7 @@ class IIko:
     
     async def get_organiztions(self, token: str) -> Dict:
         url = self.url_base + self.url_orgs
-        headers = headers = {"Authorization": f"Bearer {token}"}
+        headers = {"Authorization": f"Bearer {token}"}
         async with httpx.AsyncClient() as client:
             response = await client.get(url, timeout=10.0,headers=headers)
             if response.status_code != 200:

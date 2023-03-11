@@ -3,6 +3,7 @@ from pydantic import BaseModel
 from pydantic_mongo import AbstractRepository, ObjectIdField
 from uuid import UUID
 
+
 class Organization(BaseModel):
     id: ObjectIdField = None
     responseType: str

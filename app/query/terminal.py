@@ -13,4 +13,9 @@ async def create_terminal(documents: List[Organization], client: AsyncIOMotorCli
     termsleep = documents["terminalGroupsInSleep"]["items"]
     for term in termsleep:
         term["_id"] = term.pop("id")
-    await terminalsleep.insert_many(termsleep)
+    await terminalsleep.insert_many(termsleep) 
+
+
+async def get_terminal_mongo(client: AsyncIOMotorClient):
+    terminal = client.medvejie_ustie.terminal
+    

@@ -13,7 +13,8 @@ terminal_router = APIRouter(tags=["Terminal"])
 
 @terminal_router.post("/terminal",
     status_code=status.HTTP_200_OK)
-async def get_all_terminals(term: TerminalModel = Body(...),token: str = Depends(get_token_iiko)):
+async def get_all_terminals(term: TerminalModel = Body(...),
+                            token: str = Depends(get_token_iiko)):
     pass
 
 
@@ -21,8 +22,9 @@ async def get_all_terminals(term: TerminalModel = Body(...),token: str = Depends
                   status_code=status.HTTP_200_OK)
 async def get_iiko_term(term: TerminalModel = Body(...),
                         token: str = Depends(get_token_iiko),
-                        session_mdb:AsyncIOMotorClientSession = Depends(get_mongo_session)):
-    terminals = await IIko().take_terminal(token,term)
+                        session_mdb:AsyncIOMotorClientSession = Depends(get_mongo_session),
+                        sesion_iiko: IIko = Depends(IIko)):
+    terminals = await sesion_iiko.take_terminal(token,term)
     await create_terminal(terminals,session_mdb)
     return terminals
 

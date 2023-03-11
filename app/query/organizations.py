@@ -8,7 +8,7 @@ async def get_organization_mongo(client: AsyncIOMotorClient):
 
 async def create_organizations(documents: List[Organization], client: AsyncIOMotorClient) -> None:
     orgs = documents["organizations"]
-    for org in orgs:
-        org["_id"] = org.pop("id")
+    
     organization = client.medvejie_ustie.organization
-    result = await organization.insert_many(orgs)
+    for org in orgs:
+        result = await organization.update_one({'_id' : org["id"]},{ '$set' :org},True)

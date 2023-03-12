@@ -1,5 +1,5 @@
 from app.IIko.TokenManager import get_token_iiko
-from app.IIko.MenuIIko import IIko
+from app.IIko.IIko import IIko
 
 
 __all__ = [

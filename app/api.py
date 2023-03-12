@@ -1,5 +1,5 @@
 import time
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request,Depends
 from aiologger import Logger
 from starlette.middleware.cors import CORSMiddleware
 from fastapi_pagination import add_pagination
@@ -10,6 +10,9 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from starlette.exceptions import HTTPException as StarletteHTTPException
 from app.routers import list_of_routes
+from beanie import init_beanie
+from app.db.connection import MongoManager
+from app.schemas import __beanie_models__
 
 
 logger = Logger.with_default_handlers(name="my-logger")
@@ -60,7 +63,8 @@ app = get_app()
 
 @app.on_event("startup")
 async def startup() -> None:
-    pass
+    session = MongoManager().get_async_client()
+    await init_beanie(database=session.medvejie_ustie, document_models=__beanie_models__)
 
 
 @app.on_event("shutdown")

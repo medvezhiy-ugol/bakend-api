@@ -4,7 +4,6 @@ from motor.motor_asyncio import AsyncIOMotorClientSession
 from app.db.connection import get_mongo_session
 from app.IIko import get_token_iiko, IIko
 from app.query.menu import write_to_mongo,get_menu_mongo
-from app.db.connection import get_mongo_session
 from app.schemas.menu import MenuCredits
 
 

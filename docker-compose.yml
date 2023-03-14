@@ -22,4 +22,5 @@ services:
     environment:
       - DATABASE_URL=postgresql://postgres:postgres@db:5432/medvezhiy-ugol
       - SERVER_PORT=80
+    container_name: prod_api
     restart: always

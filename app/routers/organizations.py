@@ -25,4 +25,3 @@ async def get_organizations(token: str = Depends(get_token_iiko),
     resp = await sesion_iiko.get_organiztions(token)
     await create_organizations(resp,session_mongo)
     return resp
-    

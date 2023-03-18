@@ -11,7 +11,6 @@ from uuid import UUID
 terminal_router = APIRouter(tags=["Terminal"])
 
 
-
 @terminal_router.post("/terminal",
     status_code=status.HTTP_200_OK)
 async def get_all_terminals(Id: TerminalOneModel = Body(...),
@@ -33,4 +32,3 @@ async def get_iiko_term(term: TerminalModel = Body(...),
                                  terminalGroupsInSleep=terminals["terminalGroupsInSleep"])
     await new_terms.save()
     return new_terms
-

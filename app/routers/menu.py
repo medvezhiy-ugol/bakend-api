@@ -49,4 +49,3 @@ async def take_menu(token: str = Depends(get_token_iiko),
     menu_resp : MenuResponse = await create_new_menu(**new_menu)
     await menu_resp.save()
     return menu_resp
-

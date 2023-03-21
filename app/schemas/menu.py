@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 from uuid import UUID
 from beanie import Document, Link
-from typing import List,Optional
+from typing import List, Optional
 
 
 class MenuCredits(BaseModel):
@@ -52,7 +52,6 @@ class ItemsModel(BaseModel):
     itemId: UUID
 
 
-
 class itemModifierGroupModel(BaseModel):
     items: List[ItemsModel] | None
     name: str
@@ -79,12 +78,12 @@ class itemSizeModel(BaseModel):
 
 
 class ItemModel(Document):
-    itemSizes : List[itemSizeModel]
+    itemSizes: List[itemSizeModel]
     sku: str
     name: str
     description: str
-    allergenGroups: List[allergenGroupModel] |None
-    itemId: UUID 
+    allergenGroups: List[allergenGroupModel] | None
+    itemId: UUID
     modifierSchemaId: UUID
     taxCategory: taxCategoryModel
     orderItemType: str

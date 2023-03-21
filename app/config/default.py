@@ -2,6 +2,7 @@ from os import environ
 
 from pydantic import BaseSettings
 from dotenv import load_dotenv
+
 load_dotenv("local.env")
 
 
@@ -12,8 +13,9 @@ class DefaultSettings(BaseSettings):
     Usually, we have three environments: for development, testing and production.
     But in this situation, we only have standard settings for local development.
     """
+
     def __new__(cls):
-        if not hasattr(cls, 'instance'):
+        if not hasattr(cls, "instance"):
             cls.instance = super(DefaultSettings, cls).__new__(cls)
         return cls.instance
 
@@ -31,7 +33,7 @@ class DefaultSettings(BaseSettings):
     DB_PASSWORD: str = environ.get("DB_PASSWORD", "postgres")
     DB_POOL_SIZE: int = int(environ.get("DB_POOL_SIZE", 15))
     DB_CONNECT_RETRY: int = int(environ.get("DB_CONNECT_RETRY", 20))
-    
+
     # TOKEN SETTINGS
     ALGORITHM: str = environ.get("ALGORITHM", "HS256")
     SECRET_KEY: str = environ.get(
@@ -42,12 +44,11 @@ class DefaultSettings(BaseSettings):
     )
     # Mongo Settings
     MG_PATH: str = environ.get("MG_PATH", "localhost")
-    MG_PORT: str = environ.get("MG_PORT",27017)
-    
+    MG_PORT: str = environ.get("MG_PORT", 27017)
+
     # IIKO Settings
     API_LOGIN: str = environ.get("API_LOGIN")
-    
-    
+
     @property
     def database_settings(self) -> dict:
         """
@@ -60,7 +61,6 @@ class DefaultSettings(BaseSettings):
             "host": self.DB_PATH,
             "port": self.DB_PORT,
         }
-
 
     @property
     def mongo_settings(self) -> dict:
@@ -81,7 +81,6 @@ class DefaultSettings(BaseSettings):
             **self.database_settings,
         )
 
-
     @property
     def database_uri_async(self) -> str:
         """
@@ -90,9 +89,9 @@ class DefaultSettings(BaseSettings):
         return "postgresql+asyncpg://{user}:{password}@{host}:{port}/{database}".format(
             **self.database_settings,
         )
-    
-    
+
     @property
     def database_mongo(self) -> str:
-        
-        return "mongodb://{host}:{port}/".format(**self.mongo_settings,)
+        return "mongodb://{host}:{port}/".format(
+            **self.mongo_settings,
+        )

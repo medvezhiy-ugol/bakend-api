@@ -9,31 +9,34 @@ class ComboInformationModel(BaseModel):
     comboSourceId: UUID
     comboGroupId: UUID
 
+
 class ItemsModel(BaseModel):
     type: str
     amount: int
     productSizeId: UUID
     comboInformation: ComboInformationModel
     comment: str
-    
+
+
 class GuestsModel(BaseModel):
     count: int
 
+
 class CustomerModel(BaseModel):
-    id : UUID
+    id: UUID
     name: str
     surname: str
     comment: str
-    birthdate: datetime # ПОФИКСИТЬ ПРИ ТЕСТАХ
+    birthdate: datetime  # ПОФИКСИТЬ ПРИ ТЕСТАХ
     email: str
     shouldReceivePromoActionsInfo: bool
     shouldReceiveOrderStatusNotifications: bool
-    #gender: ???????????????????????????????????????????????????
+    # gender: ???????????????????????????????????????????????????
     type: str
-    
+
 
 class TableIdsModel(BaseModel):
-    id : UUID
+    id: UUID
 
 
 class CombosModel(BaseModel):
@@ -44,8 +47,10 @@ class CombosModel(BaseModel):
     sourceId: UUID
     programId: UUID
 
+
 class PaymentAdditionalDataModel(BaseModel):
     type: str
+
 
 class PaymentsModel(BaseModel):
     paymentTypeKind: str
@@ -65,24 +70,27 @@ class TipsModel(BaseModel):
     paymentAdditionalData: PaymentAdditionalDataModel
     isFiscalizedExternally: bool
 
+
 class CardModel(BaseModel):
     track: str
+
 
 class DiscountsModel(BaseModel):
     type: str
 
+
 class DiscountsInfoModel(BaseModel):
     card: CardModel
     discounts: List[DiscountsModel]
-    
-    
+
+
 class IikoCard5InfoModel(BaseModel):
     coupon: str
-    applicableManualConditions: List[UUID]   
+    applicableManualConditions: List[UUID]
 
- 
+
 class Order(BaseModel):
-    id : UUID
+    id: UUID
     externalNumber: str
     tableIds: List[TableIdsModel]
     customer: CustomerModel
@@ -97,21 +105,23 @@ class Order(BaseModel):
     discountsInfo: DiscountsInfoModel
     iikoCard5Info: IikoCard5InfoModel
     orderTypeId: UUID
-    
 
 
 class createOrderSettingsModel(BaseModel):
     transportToFrontTimeout: int
+
 
 class OrderCreate(BaseModel):
     organizationId: UUID
     terminalGroupId: UUID
     order: Order
     createOrderSettings: createOrderSettingsModel
-    
+
+
 class ErrorInfoModel(BaseModel):
     code: str
-    
+
+
 class OrderInfoModel(BaseModel):
     id: UUID
     posId: UUID
@@ -120,9 +130,9 @@ class OrderInfoModel(BaseModel):
     timestamp: int
     creationStatus: str
     errorInfo: ErrorInfoModel
-    #order:
-    
-    
+    # order:
+
+
 class OrderResponse(BaseModel):
     correlationId: UUID
     orderInfo: OrderInfoModel

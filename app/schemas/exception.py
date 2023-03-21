@@ -48,8 +48,18 @@ class ForbiddenException(CommonException):
 class UserFoundException(CommonException):
     def __init__(self, error: str) -> None:
         super().__init__(status.HTTP_404_NOT_FOUND, error)
-        
-        
+
+
 class IIkoServerExeption(CommonException):
     def __init__(self, error: str) -> None:
         super().__init__(status.HTTP_502_BAD_GATEWAY, error)
+
+
+class ProductNotFoundException(CommonException):
+    def __init__(self, error: str) -> None:
+        super().__init__(status.HTTP_404_NOT_FOUND, error)
+
+
+class MenuNotFoundException(CommonException):
+    def __init__(self, error: str) -> None:
+        super().__init__(status.HTTP_404_NOT_FOUND, error)

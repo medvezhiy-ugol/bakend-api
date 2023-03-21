@@ -40,7 +40,6 @@ async def get_session() -> AsyncSession:
         yield session
 
 
-
 class MongoManager:
     """
     A class that implements the necessary functionality for working with the database:
@@ -51,10 +50,9 @@ class MongoManager:
         return AsyncIOMotorClient(get_settings().database_mongo)
 
 
-
 async def get_mongo_session() -> AsyncGenerator[AsyncIOMotorClientSession, None]:
     """Get an `AsyncIOMotorClientSession` for transaction operation.
-    
+
     This always creates a new client and ends the session on exit. If the
     the transaction was not committed it is aborted.
     """
@@ -62,13 +60,10 @@ async def get_mongo_session() -> AsyncGenerator[AsyncIOMotorClientSession, None]
     try:
         pong = await client.admin.command("ping")
         if not pong.get("ok"):
-            raise 
+            raise
         yield client
     finally:
         client.close()
 
 
-__all__ = [
-    "get_session",
-    "get_mongo_session"
-]
+__all__ = ["get_session", "get_mongo_session"]

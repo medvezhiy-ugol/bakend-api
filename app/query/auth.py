@@ -39,6 +39,6 @@ async def get_info(nickname: str, session: AsyncSession):
         surname=user.surname,
         nickname=user.nickname,
         phone=user.phone,
-        role=user.user_type
+        role=user.user_type,
     )
     return userOut

@@ -9,7 +9,7 @@ from sqlalchemy.dialects.postgresql import (
     VARCHAR,
     FLOAT,
     UUID,
-    TEXT
+    TEXT,
 )
 from sqlalchemy.types import DateTime as sqlalchemy_DateTime
 import uuid
@@ -39,7 +39,6 @@ class Users(DeclarativeBase):
 
 
 class Roulette(DeclarativeBase):
-
     __tablename__ = "roulette"
 
     id = Column(UUID, unique=True, primary_key=True, default=lambda: str(uuid.uuid4()))
@@ -53,7 +52,6 @@ class Roulette(DeclarativeBase):
 
 
 class UserRoulette(DeclarativeBase):
-    
     __tablename__ = "userroulette"
 
     id = Column(UUID, unique=True, primary_key=True, default=lambda: str(uuid.uuid4()))

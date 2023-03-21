@@ -5,7 +5,7 @@ from app.db.connection import get_mongo_session
 from app.IIko import get_token_iiko, IIko
 from app.query.menu import get_menu_mongo, create_new_menu
 from app.schemas.menu import MenuCredits, MenuResponse, ItemModel
-from app.schemas.exception import ProductNotFoundException
+from app.schemas.exception import ProductNotFoundException, MenuNotFoundException
 from uuid import UUID
 
 
@@ -27,6 +27,8 @@ async def get_menu(menu_org : MenuCredits = Body(...),
                    session_mongo: AsyncIOMotorClientSession = Depends(get_mongo_session)):
     # ВОзможно на проде здесь будет ошибка
     menu = await MenuResponse.get(menu_org.externalMenuId)
+    if not menu:
+        raise MenuNotFoundException(error="Меню не найдено")
     return menu
 
 @menu_router.get("/menu/product/{id}",

@@ -24,7 +24,7 @@ async def create_new_menu(**resp) -> MenuResponse:
     for itemcategory in resp["itemCategories"]:
         itemDocs = []
         for item in itemcategory["items"]:
-            itemDoc = await ItemModel(dict(**item)).save()
+            itemDoc = await ItemModel(**dict(item)).save()
             itemDocs.append(itemDoc)
         itemcategory["item"] = itemDocs
     itemCategories.append(ItemCategorie(**itemcategory))

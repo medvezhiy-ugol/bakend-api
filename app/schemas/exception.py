@@ -57,3 +57,8 @@ class IIkoServerExeption(CommonException):
 class ProductNotFoundException(CommonException):
     def __init__(self, error: str) -> None:
         super().__init__(status.HTTP_404_NOT_FOUND, error)
+        
+        
+class MenuNotFoundException(CommonException):
+    def __init__(self, error: str) -> None:
+        super().__init__(status.HTTP_404_NOT_FOUND, error)

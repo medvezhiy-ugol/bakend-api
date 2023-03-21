@@ -11,8 +11,8 @@ class Product(BaseModel):
     priceModificationAmount: int
 
 
-class Group(BaseModel):
-    id: UUID
+class Group(Document):
+    id: UUID # такой же как в comboCategories
     name: str
     isMainGroup: bool
     products: List[Product]
@@ -36,11 +36,14 @@ class Warning(BaseModel):
     Message: str
 
 
-class ComboCategorie(BaseModel):
+class ComboCategorie(Document):
     id :UUID
     name: str
 
-class Combo(BaseModel):
+class Combo(Document):
     comboSpecifications : List[ComboSpecification]
     comboCategories: List[ComboCategorie]
     Warnings: List[Warning]
+    
+class ComboCredits(BaseModel):
+    organizationId: UUID

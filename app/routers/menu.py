@@ -22,7 +22,8 @@ async def get_menu_id(token: str = Depends(get_token_iiko),
 
 @menu_router.post("/menu/by_id",
     status_code=status.HTTP_200_OK,
-    response_model=MenuResponse)
+    response_model=MenuResponse,
+    responses={status.HTTP_404_NOT_FOUND: {"detail": "Меню не найдено"}})
 async def get_menu(menu_org : MenuCredits = Body(...),
                    session_mongo: AsyncIOMotorClientSession = Depends(get_mongo_session)):
     # ВОзможно на проде здесь будет ошибка
@@ -31,9 +32,10 @@ async def get_menu(menu_org : MenuCredits = Body(...),
         raise MenuNotFoundException(error="Меню не найдено")
     return menu
 
-@menu_router.get("/menu/product/{id}",
+@menu_router.get("/menu/product/{product_id}",
                  status_code=status.HTTP_200_OK,
-                 response_model=ItemModel)
+                 response_model=ItemModel,
+                 responses={status.HTTP_404_NOT_FOUND: {"detail": "Продукт не найден"}},)
 async def get_product_from_menu(product_id: UUID = Query(...)):
     product = await ItemModel.find(ItemModel.itemId==product_id).first_or_none()
     if product is None:

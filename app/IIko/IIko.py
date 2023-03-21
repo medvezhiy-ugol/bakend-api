@@ -12,6 +12,7 @@ class IIko:
         self.url_term = "api/1/terminal_groups"
         self.url_order = "api/1/order/create"
         self.url_menu_id = "api/2/menu"
+        self.url_combo = "api/1/combo"
 
     def __new__(cls):
         if not hasattr(cls, "instance"):
@@ -70,6 +71,22 @@ class IIko:
         headers = {"Authorization": f"Bearer {token}"}
         async with httpx.AsyncClient() as client:
             response = await client.get(url, timeout=10.0, headers=headers)
+            if response.status_code != 200:
+                raise IIkoServerExeption(error=response.text)
+            resp = response.json()
+            return resp
+
+    async def get_combos_iiko(self, token: str, organizationId: str ):
+        url = self.url_base + self.url_combo
+        data = {
+            "extraData": True,
+            "organizationId": organizationId
+            }   
+        headers = {"Authorization": f"Bearer {token}"}
+        async with httpx.AsyncClient() as client:
+            response = await client.post(
+                url, json=data.json(), timeout=10.0, headers=headers
+            )
             if response.status_code != 200:
                 raise IIkoServerExeption(error=response.text)
             resp = response.json()

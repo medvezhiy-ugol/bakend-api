@@ -2,6 +2,8 @@ from app.db.models.models import (
     DeclarativeBase,
     Users,
     User_type,
+    Roulette,
+    UserRoulette
 )
 
 __all__ = [
@@ -11,4 +13,6 @@ __all__ = [
     "CategoriesModel",
     "ProductCategoriesModel",
     "DeclarativeBase",
+    "Roulette",
+    "UserRoulette"
 ]

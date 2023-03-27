@@ -5,12 +5,12 @@ from sqlalchemy import select
 async def get_all_roulettes():
     querry_join = (
         select(
-            Roulette.id,
-            Roulette.title,
-            Roulette.start,
-            Roulette.end,
-            Roulette.score,
-            Roulette.winners_count
+           Roulette.id.label("id"),
+           Roulette.title.label("title"),
+           Roulette.start.label("start"),
+           Roulette.end.label("end"),
+           Roulette.score.label("score"),
+           Roulette.winners_count.label("winners_count"),
         )
     )
     return querry_join
@@ -22,3 +22,7 @@ async def create_roulette(title, start, end, score, winners_count, session):
     )
     session.add(new_roulette)
     await session.commit()
+
+
+async def accept_roulette():
+    pass

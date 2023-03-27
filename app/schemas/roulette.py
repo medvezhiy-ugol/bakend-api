@@ -1,13 +1,13 @@
 from pydantic import BaseModel
 from uuid import UUID
-from datetime import datetime
+from datetime import date
 
 
 class RouletteInfo(BaseModel):
     id: UUID
     title: str
-    start: datetime
-    end: datetime
+    start: date
+    end: date
     score: int
     winners_count: int
 

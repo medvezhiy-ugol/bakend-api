@@ -20,7 +20,13 @@ roulette_router = APIRouter(tags=["Roulette"])
 )
 async def get_roulettes(session: AsyncSession = Depends(get_session)):
     query_get_roulettes = await get_all_roulettes()
-    return await paginate(session, query_get_roulettes)
+    user = await session.scalar(query_get_roulettes)
+
+    print("\n\n\n\n\n\n\n", user, "\n\n\n\n\n\n")
+
+    result = await paginate(session, query_get_roulettes)
+    
+    return result
 
 
 @roulette_router.post('/roulette/create', status_code=status.HTTP_200_OK)
@@ -53,3 +59,8 @@ async def add_new_roulette(
 ) -> JSONResponse:
     await create_roulette(title, start, end, score, winners_count, session)
     return SuccessfulResponse()
+
+
+@roulette_router.get('/roulette/accept_roulette/')
+async def accept_roulette_by_id():
+    pass

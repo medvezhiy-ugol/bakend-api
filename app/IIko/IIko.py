@@ -29,11 +29,11 @@ class IIko:
             resp = response.json()
             return resp
 
-    async def take_menu_byid(self, token: str, **data: Dict) -> Dict:
+    async def take_menu_byid(self, token: str, data: int) -> Dict:
         url = self.url_base + self.url_menu
         data = {
             "organizationIds": ["df66facb-ba7e-4752-be86-afc034dbeaa5"],
-            "externalMenuId": "9583",
+            "externalMenuId": str(data),
         }
         headers = {"Authorization": f"Bearer {token}"}
         async with httpx.AsyncClient() as client:

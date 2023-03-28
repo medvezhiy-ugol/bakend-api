@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, status, Body, Query
+from fastapi import APIRouter, Depends, status, Body, Query, Path
 from fastapi.responses import JSONResponse
 from motor.motor_asyncio import AsyncIOMotorClientSession
 from app.db.connection import get_mongo_session
@@ -51,14 +51,15 @@ async def get_product_from_menu(product_id: UUID = Query(...)):
 
 
 @menu_router.post(
-    "/menu/iiko/by_id", status_code=status.HTTP_200_OK, response_model=MenuResponse
+    "/menu/iiko/by_id/{id_menu}", status_code=status.HTTP_200_OK, response_model=MenuResponse
 )
 async def take_menu(
     token: str = Depends(get_token_iiko),
     session_mdb: AsyncIOMotorClientSession = Depends(get_mongo_session),
+    id_menu:int = Path(...),
     sesion_iiko: IIko = Depends(IIko),
 ):
-    new_menu = await sesion_iiko.take_menu_byid(token)
+    new_menu = await sesion_iiko.take_menu_byid(token,id_menu)
     menu_resp: MenuResponse = await create_new_menu(**new_menu)
     await menu_resp.save()
     return menu_resp

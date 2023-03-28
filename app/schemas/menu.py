@@ -67,13 +67,13 @@ class itemSizeModel(BaseModel):
     prices: List[priceModel] | None
     itemModifierGroups: List[itemModifierGroupModel] | None
     sku: str
-    sizeCode: str
-    sizeName: str
+    sizeCode: Optional[str]
+    sizeName: Optional[str]
     isDefault: bool
     portionWeightGrams: int
-    sizeId: UUID
+    sizeId: Optional[UUID]
     nutritionPerHundredGrams: Optional[dict]
-    buttonImageUrl: str | None
+    buttonImageUrl: Optional[str] 
     buttonImageCroppedUrl: dict | None
 
 
@@ -95,7 +95,7 @@ class ItemCategorie(BaseModel):
     id: UUID
     name: str
     description: str
-    buttonImageUrl: str
+    buttonImageUrl: str | None
     headerImageUrl: str | None
     iikoGroupId: UUID
 

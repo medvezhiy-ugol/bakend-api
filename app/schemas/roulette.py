@@ -21,6 +21,9 @@ class UserRouletteInfo(BaseModel):
     roulette_id: UUID
     is_winner: bool
 
+    class Config:
+        orm_mode = True
+
 
 class RouletteCreateForm(BaseModel):
     title: str

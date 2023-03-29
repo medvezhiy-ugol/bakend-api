@@ -1,5 +1,5 @@
-from app.db.models.models import Roulette
-from sqlalchemy import select
+from app.db.models.models import Roulette, UserRoulette
+from sqlalchemy import select, and_
 
 
 async def get_all_roulettes():
@@ -24,5 +24,19 @@ async def create_roulette(title, start, end, score, winners_count, session):
     await session.commit()
 
 
-async def accept_roulette():
-    pass
+async def get_user_won_roulettes(current_user, session):
+    print("\n\n\n\n\n\n\n\n")
+    user_id = current_user.id
+    user_query = select(UserRoulette).where(
+        and_(
+            UserRoulette.user_id == user_id,
+            UserRoulette.is_winner == True,
+        )
+    )
+
+    user: list[UserRoulette] = await session.execute(user_query)
+    user = user.scalars().all()
+    if not user:
+        return []
+
+    return user

@@ -1,6 +1,6 @@
 from fastapi import APIRouter, status, Depends, Form, Body
-from app.query.roulette import get_all_roulettes, create_roulette
-from app.schemas.roulette import RouletteInfo, RouletteCreateForm
+from app.query.roulette import get_all_roulettes, create_roulette, get_user_won_roulettes
+from app.schemas.roulette import RouletteInfo, RouletteCreateForm, RouletteThatUserWon, UserRouletteInfo
 from app.db.connection import get_session
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi_pagination.ext.async_sqlalchemy import paginate
@@ -8,7 +8,9 @@ from fastapi_pagination import Page
 from datetime import date
 from fastapi.responses import JSONResponse
 from app.schemas.auth import SuccessfulResponse
-
+from app.auth.oauth2 import get_current_user
+from app.query.auth import find_by_nickname
+from app.utils import serialize_models
 
 roulette_router = APIRouter(tags=["Roulette"])
 
@@ -20,12 +22,7 @@ roulette_router = APIRouter(tags=["Roulette"])
 )
 async def get_roulettes(session: AsyncSession = Depends(get_session)):
     query_get_roulettes = await get_all_roulettes()
-    user = await session.scalar(query_get_roulettes)
-
-    print("\n\n\n\n\n\n\n", user, "\n\n\n\n\n\n")
-
     result = await paginate(session, query_get_roulettes)
-    
     return result
 
 
@@ -45,6 +42,11 @@ async def add_new_roulette(
     return SuccessfulResponse()
 
 
-@roulette_router.get('/roulette/accept_roulette/')
-async def accept_roulette_by_id():
-    pass
+@roulette_router.get('/roulette/user_won_roulette/', response_model=list[UserRouletteInfo], status_code=status.HTTP_200_OK)
+async def won_user_roulettes(
+    session: AsyncSession = Depends(get_session),
+    current_user: str = Depends(get_current_user)
+):
+    result = await find_by_nickname(current_user, session)
+    answer = await get_user_won_roulettes(result, session)
+    return serialize_models(answer, UserRouletteInfo)

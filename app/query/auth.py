@@ -29,6 +29,7 @@ async def find_by_nickname(nickname: str, session: AsyncSession) -> str:
     user: Users = await session.scalar(user_query)
     if not user:
         raise NotFoundException(error="Пользователь не найден")
+    return user
 
 
 async def get_info(nickname: str, session: AsyncSession):

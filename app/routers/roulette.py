@@ -1,6 +1,6 @@
 from fastapi import APIRouter, status, Depends, Form, Body
 from app.query.roulette import get_all_roulettes, create_roulette, get_user_won_roulettes
-from app.schemas.roulette import RouletteInfo, RouletteCreateForm, RouletteThatUserWon, UserRouletteInfo
+from app.schemas.roulette import RouletteInfo, RouletteCreateForm, UserRouletteInfo
 from app.db.connection import get_session
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi_pagination.ext.async_sqlalchemy import paginate

@@ -1,5 +1,5 @@
 import time
-from fastapi import FastAPI, Request,Depends
+from fastapi import FastAPI, Request, Depends
 from aiologger import Logger
 from starlette.middleware.cors import CORSMiddleware
 from fastapi_pagination import add_pagination
@@ -64,7 +64,9 @@ app = get_app()
 @app.on_event("startup")
 async def startup() -> None:
     session = MongoManager().get_async_client()
-    await init_beanie(database=session.medvejie_ustie, document_models=__beanie_models__)
+    await init_beanie(
+        database=session.medvejie_ustie, document_models=__beanie_models__
+    )
 
 
 @app.on_event("shutdown")

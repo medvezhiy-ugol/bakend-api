@@ -46,11 +46,11 @@ async def login(
     return Token(access_token=access_token, token_type="bearer")
 
 
-@registr_router.get("/whoiam",  status_code=status.HTTP_200_OK)
+@registr_router.get("/whoiam", status_code=status.HTTP_200_OK)
 async def get_info_user(
-    #session: AsyncSession = Depends(get_session),
-    #current_user: str = Depends(get_current_user),
-    token: str = Depends(get_token_iiko)
+    # session: AsyncSession = Depends(get_session),
+    # current_user: str = Depends(get_current_user),
+    token: str = Depends(get_token_iiko),
 ):
     print(token)
     return token

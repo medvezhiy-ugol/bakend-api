@@ -11,9 +11,14 @@ class RouletteInfo(BaseModel):
     score: int
     winners_count: int
 
+    class Config:
+        orm_mode = True
+
+
 
 class UserRouletteInfo(BaseModel):
     id: UUID
     user_id: UUID
     roulette_id: UUID
     is_winner: bool
+

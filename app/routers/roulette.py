@@ -1,6 +1,6 @@
-from fastapi import APIRouter, status, Depends, Form
+from fastapi import APIRouter, status, Depends, Form, Body
 from app.query.roulette import get_all_roulettes, create_roulette
-from app.schemas.roulette import RouletteInfo
+from app.schemas.roulette import RouletteInfo, RouletteCreateForm
 from app.db.connection import get_session
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi_pagination.ext.async_sqlalchemy import paginate
@@ -31,33 +31,17 @@ async def get_roulettes(session: AsyncSession = Depends(get_session)):
 
 @roulette_router.post('/roulette/create', status_code=status.HTTP_200_OK)
 async def add_new_roulette(
-    title: str = Form(
-        ...,
-        description="Roulette title",
-        min_length=3,
-        max_length=999,
-    ),
-    start: date = Form(
-        ...,
-        description="Roulette start (YYYY-MM-DD)"
-    ),
-    end: date = Form(
-        ...,
-        description="Roulette end (YYYY-MM-DD)"
-    ),
-    score: int = Form(
-        ...,
-        description="Roulette score",
-        lt=1000,
-    ),
-    winners_count: int = Form(
-        ...,
-        description="Roulette winners count",
-        lt=1000,
-    ),
+    data: RouletteCreateForm = Body(...),
     session: AsyncSession = Depends(get_session),
 ) -> JSONResponse:
-    await create_roulette(title, start, end, score, winners_count, session)
+    await create_roulette(
+        data.title,
+        data.start,
+        data.end,
+        data.score,
+        data.winners_count,
+        session
+    )
     return SuccessfulResponse()
 
 

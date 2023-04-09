@@ -7,7 +7,7 @@ from app.config import DefaultSettings
 
 class TokenManager:
     """
-    Создает токен, с периодичностью в часЫ
+    Создает токен, с периодичностью в часы
     """
 
     def __init__(self) -> None:

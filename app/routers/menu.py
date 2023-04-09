@@ -1,5 +1,4 @@
 from fastapi import APIRouter, Depends, status, Body, Query, Path
-from fastapi.responses import JSONResponse
 from motor.motor_asyncio import AsyncIOMotorClientSession
 from app.db.connection import get_mongo_session
 from app.IIko import get_token_iiko, IIko
@@ -31,7 +30,7 @@ async def get_menu(
     session_mongo: AsyncIOMotorClientSession = Depends(get_mongo_session),
 ):
     # ВОзможно на проде здесь будет ошибка
-    menu = await MenuResponse.get(menu_org.externalMenuId)
+    menu = await MenuResponse.get(menu_org.externalMenuId).find_many()
     if not menu:
         raise MenuNotFoundException(error="Меню не найдено")
     return menu

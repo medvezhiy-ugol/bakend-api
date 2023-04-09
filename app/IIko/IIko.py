@@ -8,16 +8,32 @@ class IIko:
     def __init__(self) -> None:
         self.url_base = "https://api-ru.iiko.services/"
         self.url_menu = "api/2/menu/by_id"
-        self.url_orgs = "api/1/organizations"
+        self.url_orgs = "api/1/reserve/available_organizations"
         self.url_term = "api/1/terminal_groups"
         self.url_order = "api/1/order/create"
         self.url_menu_id = "api/2/menu"
         self.url_combo = "api/1/combo"
+        self.url_auth_phone = "api/1/loyalty/iiko/message/send_sms"
 
     def __new__(cls):
         if not hasattr(cls, "instance"):
             cls.instance = super(IIko, cls).__new__(cls)
         return cls.instance
+    
+    async def auth_phone(self, phone: str):
+        url = self.url_auth_phone
+        data = {
+            "from": "MedveshUgol",
+            "text": f"Activate code:",
+            "to": phone,
+            "api_key": ""
+        }
+        async with httpx.AsyncClient() as client:
+            response = await client.post(url, timeout=10.0,data=data)
+            if response.status_code != 200:
+                raise IIkoServerExeption(error=response.text)
+            resp = response.json()
+            return resp
 
     async def take_info_menu(self, token: str) -> Dict:
         url = self.url_base + self.url_menu_id
@@ -69,8 +85,13 @@ class IIko:
     async def get_organiztions(self, token: str) -> Dict:
         url = self.url_base + self.url_orgs
         headers = {"Authorization": f"Bearer {token}"}
+        data = {
+                "organizationIds": [],
+                "returnAdditionalInfo": True,
+                "includeDisabled": True
+        }
         async with httpx.AsyncClient() as client:
-            response = await client.get(url, timeout=10.0, headers=headers)
+            response = await client.post(url, json=data, timeout=10.0, headers=headers)
             if response.status_code != 200:
                 raise IIkoServerExeption(error=response.text)
             resp = response.json()
@@ -85,7 +106,7 @@ class IIko:
         headers = {"Authorization": f"Bearer {token}"}
         async with httpx.AsyncClient() as client:
             response = await client.post(
-                url, json=data.json(), timeout=10.0, headers=headers
+                url, json=data, timeout=10.0, headers=headers
             )
             if response.status_code != 200:
                 raise IIkoServerExeption(error=response.text)

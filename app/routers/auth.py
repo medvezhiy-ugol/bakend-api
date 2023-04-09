@@ -54,3 +54,11 @@ async def get_info_user(
 ):
     print(token)
     return token
+
+
+@registr_router.post(
+    "/verify/phone",
+    status_code=status.HTTP_200_OK
+)
+async def verify_phone():
+    pass

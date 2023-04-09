@@ -19,7 +19,7 @@ class RegUser(BaseModel):
 
 
 class AuthUser(BaseModel):
-    nickname: str = Field(..., max_length=30)
+    phone: str = Field(..., max_length=30)
 
 
 class SuccessfulResponse(BaseModel):

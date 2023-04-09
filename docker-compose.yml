@@ -6,22 +6,30 @@ services:
     hostname: mongodb
     restart: always
     volumes:
-      - ./data/db/
+      - mongo-data:/data/db
     environment:
       - MONGO_USER=aboba
       - MONGO_PASSWORD=aboba
       - MONGO_DATABASE=medvezhiy-ugol
     ports:
       - 27017:27017
+    networks:
+      - med-ugol
   db:
     image: postgres
+    hostname: db
     ports:
       - "6432:5432"  
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
     environment: 
         - POSTGRES_DB=medvezhiy-ugol
         - POSTGRES_USER=postgres
         - POSTGRES_PASSWORD=postgres
     restart: always
+    container_name: "db"
+    networks:
+      - med-ugol
   web:
     build:
       context: .
@@ -34,6 +42,15 @@ services:
       - db
       - mongodb
     environment:
-      - DATABASE_URL=postgresql://postgres:postgres@db:5432/medvezhiy-ugol
+      - DATABASE_URL=postgresql://postgres:postgres@db:6432/medvezhiy-ugol
       - SERVER_PORT=80
+    container_name: prod_api
     restart: always
+    networks:
+      - med-ugol
+networks:
+  med-ugol:
+    name: med-ugol-network
+volumes:
+  postgres-data:
+  mongo-data:

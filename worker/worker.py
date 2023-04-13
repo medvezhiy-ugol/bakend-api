@@ -8,6 +8,6 @@ celery.conf.result_backend = os.environ.get("CELERY_RESULT_BACKEND", "redis://lo
 
 
 @celery.task(name="create_task")
-def create_roulette(roulette_counter: int) -> int:
-    create_new_roulette(f"Рулетка №{roulette_counter}")
-    time.sleep(604800)  # 7 days
+async def create_roulette(roulette_counter: int) -> int:
+    await create_new_roulette(f"Рулетка №{roulette_counter}")
+    # time.sleep(604800)  # 7 days

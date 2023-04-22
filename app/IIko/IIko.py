@@ -13,6 +13,8 @@ class IIko:
         self.url_order = "api/1/order/create"
         self.url_menu_id = "api/2/menu"
         self.url_combo = "api/1/combo"
+        self.url_sms = "api/1/loyalty/iiko/message/send_sms"
+        self.url_create_customer = "api/1/loyalty/iiko/customer/create_or_update"
 
     def __new__(cls):
         if not hasattr(cls, "instance"):
@@ -76,12 +78,76 @@ class IIko:
             resp = response.json()
             return resp
 
-    async def get_combos_iiko(self, token: str, organizationId: str ):
+    async def get_combos_iiko(self, token: str, organizationId: str):
         url = self.url_base + self.url_combo
         data = {
             "extraData": True,
             "organizationId": organizationId
-            }   
+            }
+        headers = {"Authorization": f"Bearer {token}"}
+        async with httpx.AsyncClient() as client:
+            response = await client.post(
+                url, json=data.json(), timeout=10.0, headers=headers
+            )
+            if response.status_code != 200:
+                raise IIkoServerExeption(error=response.text)
+            resp = response.json()
+            return resp
+
+    async def send_sms(self, token: str, phone: str, text: str, organizationId: str):
+        url = self.url_base + self.url_sms
+        data = {
+            "phone": phone,
+            "text": text,
+            "organizationId": organizationId,
+        }
+        headers = {"Authorization": f"Bearer {token}"}
+        async with httpx.AsyncClient() as client:
+            response = await client.post(
+                url, json=data.json(), timeout=10.0, headers=headers
+            )
+            if response.status_code != 200:
+                raise IIkoServerExeption(error=response.text)
+            resp = response.json()
+            return resp
+
+    async def create_or_update(
+            self,
+            token: str,
+            sex: int,
+            consentStatus: int,
+            organizationId: str,
+            id: str = None,
+            phone: str = None,
+            cardTrack: str = None,
+            cardNumber: str = None,
+            name: str = None,
+            middleName: str = None,
+            surName: str = None,
+            birthday: str = None,
+            email: str = None,
+            shouldReceivePromoActionsInfo: bool = None,
+            referrerId: str = None,
+            userData: str = None,
+            ):
+        url = self.url_base + self.url_create_customer
+        data = {
+            "id": id,
+            "phone": phone,
+            "cardTrack": cardTrack,
+            "cardNumber": cardNumber,
+            "name": name,
+            "middleName": middleName,
+            "surName": surName,
+            "birthday": birthday,
+            "email": email,
+            "sex": sex,
+            "consentStatus": consentStatus,
+            "shouldReceivePromoActionsInfo": shouldReceivePromoActionsInfo,
+            "referrerId": referrerId,
+            "userData": userData,
+            "organizationId": organizationId,
+        }
         headers = {"Authorization": f"Bearer {token}"}
         async with httpx.AsyncClient() as client:
             response = await client.post(

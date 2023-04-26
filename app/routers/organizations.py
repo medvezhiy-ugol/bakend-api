@@ -26,5 +26,5 @@ async def get_organizations(
     sesion_iiko: IIko = Depends(IIko),
 ):
     resp = await sesion_iiko.get_organiztions(token)
-    create_organizations(resp, session_mongo)
-    return  await Organization.all().to_list()
+    await create_organizations(resp, session_mongo)
+    return  resp

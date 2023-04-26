@@ -30,7 +30,7 @@ async def get_menu(
     session_mongo: AsyncIOMotorClientSession = Depends(get_mongo_session),
 ):
     # ВОзможно на проде здесь будет ошибка
-    menu = await MenuResponse.get(menu_org.externalMenuId).find_many()
+    menu = await MenuResponse.get(menu_org.externalMenuId)
     if not menu:
         raise MenuNotFoundException(error="Меню не найдено")
     return menu
@@ -59,6 +59,6 @@ async def take_menu(
     sesion_iiko: IIko = Depends(IIko),
 ):
     new_menu = await sesion_iiko.take_menu_byid(token,id_menu)
-    menu_resp: MenuResponse = await create_new_menu(**new_menu)
-    await menu_resp.save()
-    return menu_resp
+   # menu_resp: MenuResponse = await create_new_menu(**new_menu)
+    #await menu_resp.save()
+    return new_menu

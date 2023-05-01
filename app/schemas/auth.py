@@ -13,14 +13,17 @@ class TokenData(BaseModel):
 
 class RegUser(BaseModel):
     name: str
-    surname: str
     phone: str
-    nickname: str
+    code: str
 
 
 class AuthUser(BaseModel):
     phone: str = Field(..., max_length=30)
 
+
+class AuthUserCode(BaseModel):
+    phone: str = Field(..., max_length=30)
+    code: str = Field (..., max_length=5)
 
 class SuccessfulResponse(BaseModel):
     details: str = Field("Выполнено", title="Статус операции")

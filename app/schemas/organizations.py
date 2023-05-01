@@ -4,6 +4,7 @@ from pydantic_mongo import AbstractRepository, ObjectIdField
 from beanie import Document
 from uuid import UUID
 
+
 class Organization(Document):
     id: UUID = None
     responseType: str

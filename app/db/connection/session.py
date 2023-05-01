@@ -9,6 +9,7 @@ from motor.motor_asyncio import (
 
 from app.config import get_settings
 from typing import Any, AsyncGenerator
+import redis.asyncio as redis
 
 
 class SessionManager:
@@ -65,5 +66,34 @@ async def get_mongo_session() -> AsyncGenerator[AsyncIOMotorClientSession, None]
     finally:
         client.close()
 
+
+class Redis:
+
+    con: redis.Redis = None
+    
+    def __new__(cls):
+        if not hasattr(cls, "instance"):
+            cls.instance = super(Redis, cls).__new__(cls)
+        return cls.instance 
+    
+    @classmethod
+    async def connect_redis(cls) -> None:
+        cls.con = None
+        cls.con = redis.from_url(
+                get_settings().REDIS_URL,
+                encoding="utf-8", decode_responses=True)
+    
+    @classmethod
+    async def disconnect_redis(cls) -> None:
+        if cls.con:
+            await cls.con.close()
+
+    async def set_code_phone(self, phone: str, code: str) -> None:
+        await self.con.set(phone, code)
+        await self.con.expire(phone,5* 60)
+        
+    async def get_code_phone(self, phone) -> str:
+        return await self.con.get(phone)
+    
 
 __all__ = ["get_session", "get_mongo_session"]

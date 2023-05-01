@@ -27,9 +27,9 @@ class DefaultSettings(BaseSettings):
 
     # Postgresql Settings
     DB_NAME: str = environ.get("DB_NAME", "medvezhiy-ugol")
-    DB_PATH: str = environ.get("DB_PATH", "localhost")
+    DB_PATH: str = environ.get("DB_PATH", "db")
     DB_USER: str = environ.get("DB_USER", "postgres")
-    DB_PORT: int = int(environ.get("DB_PORT", 6432))
+    DB_PORT: int = int(environ.get("DB_PORT", 5432))
     DB_PASSWORD: str = environ.get("DB_PASSWORD", "postgres")
     DB_POOL_SIZE: int = int(environ.get("DB_POOL_SIZE", 15))
     DB_CONNECT_RETRY: int = int(environ.get("DB_CONNECT_RETRY", 20))
@@ -43,7 +43,7 @@ class DefaultSettings(BaseSettings):
         environ.get("ACCESS_TOKEN_EXPIRE_MINUTES", 100000)
     )
     # Mongo Settings
-    MG_PATH: str = environ.get("MG_PATH", "localhost")
+    MG_PATH: str = environ.get("MG_PATH", "mongodb")
     MG_PORT: str = environ.get("MG_PORT", 27017)
 
     # IIKO Settings

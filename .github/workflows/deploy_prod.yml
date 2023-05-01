@@ -1,0 +1,64 @@
+name: Deploy production
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  Update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Copy ssh key
+        run: touch private_key && echo -e "${{ secrets.SSH_PRIVATE_KEY }}" > private_key && chmod 600 private_key
+      - name: Add key to keyring
+        run: ssh -i private_key -o StrictHostKeyChecking=accept-new test_user@${{ secrets.SSH_HOST }}
+      - name: Pull latest changes
+        run: ssh -i private_key test_user@${{ secrets.SSH_HOST }} 'cd ~/bakend-api; git checkout main; git pull; git submodule update --remote'
+  EnvCreate:
+    runs-on: ubuntu-latest
+    needs: [Update]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Copy ssh key
+        run: touch private_key && echo -e "${{ secrets.SSH_PRIVATE_KEY }}" > private_key && chmod 600 private_key
+      - name: Add key to keyring
+        run: ssh -i private_key -o StrictHostKeyChecking=accept-new test_user@${{ secrets.SSH_HOST }}
+      - name: Create env file
+        run: ssh -i private_key test_user@${{ secrets.SSH_HOST }} 'cd ~/bakend-api; echo "${{ secrets.ENVIRONMENT }}" > local.env'
+  Clear:
+    runs-on: ubuntu-latest
+    needs: [EnvCreate]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Copy ssh key
+        run: touch private_key && echo -e "${{ secrets.SSH_PRIVATE_KEY }}" > private_key && chmod 600 private_key
+      - name: Add key to keyring
+        run: ssh  -i private_key -o StrictHostKeyChecking=no test_user@${{ secrets.SSH_HOST }}
+      - name: Kill services
+        run: ssh  -i private_key test_user@${{ secrets.SSH_HOST }} 'docker kill prod_api || true'
+  Prepare:
+    runs-on: ubuntu-latest
+    needs: [Clear]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Copy ssh key
+        run: touch private_key && echo -e "${{ secrets.SSH_PRIVATE_KEY }}" > private_key && chmod 600 private_key
+      - name: Add key to keyring
+        run: ssh  -i private_key -o StrictHostKeyChecking=no test_user@${{ secrets.SSH_HOST }}
+      - name: Set up environment
+        run: ssh -i private_key test_user@${{ secrets.SSH_HOST }} 'cd ~/bakend-api; echo -e "${{ secrets.ENV_CONTENTS_DEV }}" > .env'
+      - name: Build development stand
+        run: ssh -i private_key test_user@${{ secrets.SSH_HOST }} 'cd ~/bakend-api; docker-compose build --no-cache'
+  Run:
+    runs-on: ubuntu-latest
+    needs: [Prepare]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Copy ssh key
+        run: touch private_key && echo -e "${{ secrets.SSH_PRIVATE_KEY }}" > private_key && chmod 600 private_key
+      - name: Add key to keyring
+        run: ssh -i private_key -o StrictHostKeyChecking=accept-new test_user@${{ secrets.SSH_HOST }}
+      - name: Start development stand
+        run: ssh -i private_key test_user@${{ secrets.SSH_HOST }} 'cd ~/bakend-api; docker-compose up -d'

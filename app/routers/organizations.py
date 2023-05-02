@@ -3,8 +3,9 @@ from fastapi.responses import JSONResponse
 from motor.motor_asyncio import AsyncIOMotorClientSession
 from app.db.connection import get_mongo_session
 from app.IIko import get_token_iiko, IIko
-from app.query.organizations import get_organization_mongo, create_organizations
+from app.query.organizations import  create_organizations
 from app.db.connection import get_mongo_session
+from app.schemas.organizations import Organization
 
 
 organization_router = APIRouter(tags=["Организации"])
@@ -14,8 +15,8 @@ organization_router = APIRouter(tags=["Организации"])
 async def get_organizations_mongo(
     session_mongo: AsyncIOMotorClientSession = Depends(get_mongo_session),
 ):
-    res = await get_organization_mongo(session_mongo)
-    return JSONResponse(res)
+    res = await Organization.all().to_list()
+    return res
 
 
 @organization_router.post("/organizations", status_code=status.HTTP_200_OK)
@@ -26,4 +27,4 @@ async def get_organizations(
 ):
     resp = await sesion_iiko.get_organiztions(token)
     await create_organizations(resp, session_mongo)
-    return resp
+    return  resp

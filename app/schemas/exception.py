@@ -68,3 +68,13 @@ class MenuNotFoundException(CommonException):
 class ComboNotFoundException(CommonException):
     def __init__(self, error: str) -> None:
         super().__init__(status.HTTP_404_NOT_FOUND, error)
+
+
+class IncorrectCodeException(CommonException):
+    def __init__(self, error: str) -> None:
+        super().__init__(status.HTTP_401_UNAUTHORIZED, error)
+        
+        
+class TimeOutCodeException(CommonException):
+    def __init__(self, error: str) -> None:
+        super().__init__(status.HTTP_403_FORBIDDEN, error)

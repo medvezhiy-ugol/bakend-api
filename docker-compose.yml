@@ -48,9 +48,18 @@ services:
     restart: always
     networks:
       - med-ugol
+  redis:
+    image: 'redis:6.0.3'
+    ports:
+      - 6379:6379
+    environment:
+        - ALLOW_EMPTY_PASSWORD=yes
+    networks:
+      - med-ugol
 networks:
   med-ugol:
     name: med-ugol-network
 volumes:
   postgres-data:
   mongo-data:
+

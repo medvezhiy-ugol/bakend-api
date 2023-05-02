@@ -1,5 +1,4 @@
 from fastapi import APIRouter, Depends, status, Body, Query, Path
-from fastapi.responses import JSONResponse
 from motor.motor_asyncio import AsyncIOMotorClientSession
 from app.db.connection import get_mongo_session
 from app.IIko import get_token_iiko, IIko
@@ -60,6 +59,6 @@ async def take_menu(
     sesion_iiko: IIko = Depends(IIko),
 ):
     new_menu = await sesion_iiko.take_menu_byid(token,id_menu)
-    menu_resp: MenuResponse = await create_new_menu(**new_menu)
-    await menu_resp.save()
-    return menu_resp
+   # menu_resp: MenuResponse = await create_new_menu(**new_menu)
+    #await menu_resp.save()
+    return new_menu

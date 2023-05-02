@@ -4,7 +4,7 @@ from aiologger import Logger
 from starlette.middleware.cors import CORSMiddleware
 from fastapi_pagination import add_pagination
 from app.config import DefaultSettings, get_settings
-from app.db.connection import SessionManager
+from app.db.connection import SessionManager,Redis
 from app.schemas.exception import CommonException, InternalServerError
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
@@ -34,6 +34,7 @@ def init_database() -> None:
     Check before launching the application that the database is available to it.
     """
     SessionManager()
+    
 
 
 def get_app() -> FastAPI:
@@ -67,11 +68,13 @@ async def startup() -> None:
     await init_beanie(
         database=session.medvejie_ustie, document_models=__beanie_models__
     )
+    await Redis.connect_redis()
 
 
 @app.on_event("shutdown")
 async def shutdown() -> None:
     await logger.shutdown()
+    await Redis.disconnect_redis()
 
 
 @app.middleware("http")

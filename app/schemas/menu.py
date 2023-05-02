@@ -88,21 +88,22 @@ class ItemModel(Document):
     taxCategory: taxCategoryModel
     orderItemType: str
     modifierSchemaId: Optional[UUID]
+    # id itemCategorie
 
 
-class ItemCategorie(BaseModel):
+class ItemCategorie(Document):
     items: List[Link[ItemModel]]
     id: UUID
     name: str
     description: str
     buttonImageUrl: str | None
     headerImageUrl: str | None
-    iikoGroupId: UUID
+    iikoGroupId: UUID | None
 
 
 class MenuResponse(Document):
     id: int
     name: str
     description: str
-    itemCategories: List[ItemCategorie]
+    itemCategories: List[Link[ItemCategorie]]
     comboCategories: list

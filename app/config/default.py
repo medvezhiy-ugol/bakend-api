@@ -49,6 +49,10 @@ class DefaultSettings(BaseSettings):
     # IIKO Settings
     API_LOGIN: str = environ.get("API_LOGIN")
 
+    # Redis
+    REDIS_URL: str
+
+
     @property
     def database_settings(self) -> dict:
         """

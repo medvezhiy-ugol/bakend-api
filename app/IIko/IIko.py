@@ -51,7 +51,7 @@ class IIko:
     async def take_menu_byid(self, token: str, data: int) -> Dict:
         url = self.url_base + self.url_menu
         data = {
-            "organizationIds": ["df66facb-ba7e-4752-be86-afc034dbeaa5"],
+            "organizationIds": ["0915d8a9-4ca7-495f-a75c-1ce684424781"],
             "externalMenuId": str(data),
         }
         headers = {"Authorization": f"Bearer {token}"}

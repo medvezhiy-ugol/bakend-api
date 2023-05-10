@@ -72,9 +72,9 @@ app = get_app()
 @app.on_event("startup")
 async def startup() -> None:
     session = MongoManager().get_async_client()
-    # await init_beanie(
-    #     database=session.medvejie_ustie, document_models=__beanie_models__
-    # )
+    await init_beanie(
+        database=session.medvejie_ustie, document_models=__beanie_models__
+    )
     await Redis.connect_redis()
 
 

@@ -13,8 +13,8 @@ services:
       - MONGO_DATABASE=medvezhiy-ugol
     ports:
       - 27017:27017
-   # networks:
-    #  - med-ugol
+    networks:
+      - med-ugol
   db:
     image: postgres
     hostname: db
@@ -54,8 +54,8 @@ services:
       - 6379:6379
     environment:
         - ALLOW_EMPTY_PASSWORD=yes
-   # networks:
-     # - med-ugol
+    networks:
+       - med-ugol
 networks:
   med-ugol:
     name: med-ugol-network

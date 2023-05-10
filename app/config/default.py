@@ -40,7 +40,7 @@ class DefaultSettings(BaseSettings):
         "SECRET_KEY", "09d25e094faa6ca2556c818166b7a9563b93f7099f6f0f4caa6cf63b88e8d3e7"
     )
     ACCESS_TOKEN_EXPIRE_MINUTES: int = int(
-        environ.get("ACCESS_TOKEN_EXPIRE_MINUTES", 100000)
+        environ.get("ACCESS_TOKEN_EXPIRE_MINUTES", 100)
     )
     # Mongo Settings
     MG_PATH: str = environ.get("MG_PATH", "mongodb")

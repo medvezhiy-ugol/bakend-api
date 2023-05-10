@@ -13,7 +13,9 @@ from app.routers import list_of_routes
 from beanie import init_beanie
 from app.db.connection import MongoManager
 from app.schemas import __beanie_models__
-
+from pydantic import BaseModel
+from fastapi_jwt_auth import AuthJWT
+from fastapi_jwt_auth.exceptions import AuthJWTException
 
 logger = Logger.with_default_handlers(name="my-logger")
 
@@ -35,7 +37,12 @@ def init_database() -> None:
     """
     SessionManager()
     
+class Settings(BaseModel):
+    authjwt_secret_key: str = "afiger"
 
+@AuthJWT.load_config
+def get_config():
+    return Settings()
 
 def get_app() -> FastAPI:
     """
@@ -65,9 +72,9 @@ app = get_app()
 @app.on_event("startup")
 async def startup() -> None:
     session = MongoManager().get_async_client()
-    await init_beanie(
-        database=session.medvejie_ustie, document_models=__beanie_models__
-    )
+    # await init_beanie(
+    #     database=session.medvejie_ustie, document_models=__beanie_models__
+    # )
     await Redis.connect_redis()
 
 
@@ -124,6 +131,12 @@ async def unicorn_api_exception_handler(_request: Request, exc: CommonException)
         content={"detail": exc.error},
     )
 
+@app.exception_handler(AuthJWTException)
+def authjwt_exception_handler(request: Request, exc: AuthJWTException):
+    return JSONResponse(
+        status_code=exc.status_code,
+        content={"detail": exc.message}
+    )
 
 app.add_middleware(
     CORSMiddleware,

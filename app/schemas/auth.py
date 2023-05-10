@@ -5,6 +5,8 @@ from pydantic import BaseModel, Field
 class Token(BaseModel):
     access_token: str
     token_type: str
+    refresh_token: str
+    expires_it: int
 
 
 class TokenData(BaseModel):

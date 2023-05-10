@@ -137,9 +137,7 @@ class IIko:
             self,
             token: str,
             sex: int,
-            consentStatus: int,
             organizationId: str,
-            id: str = None,
             phone: str = None,
             cardTrack: str = None,
             cardNumber: str = None,
@@ -147,33 +145,21 @@ class IIko:
             middleName: str = None,
             surName: str = None,
             birthday: str = None,
-            email: str = None,
-            shouldReceivePromoActionsInfo: bool = None,
-            referrerId: str = None,
-            userData: str = None,
             ):
         url = self.url_base + self.url_create_customer
         data = {
-            "id": id,
             "phone": phone,
-            "cardTrack": cardTrack,
-            "cardNumber": cardNumber,
             "name": name,
             "middleName": middleName,
             "surName": surName,
             "birthday": birthday,
-            "email": email,
             "sex": sex,
-            "consentStatus": consentStatus,
-            "shouldReceivePromoActionsInfo": shouldReceivePromoActionsInfo,
-            "referrerId": referrerId,
-            "userData": userData,
             "organizationId": organizationId,
         }
         headers = {"Authorization": f"Bearer {token}"}
         async with httpx.AsyncClient() as client:
             response = await client.post(
-                url, json=data.json(), timeout=10.0, headers=headers
+                url, json=data, timeout=10.0, headers=headers
             )
             if response.status_code != 200:
                 raise IIkoServerExeption(error=response.text)
@@ -193,6 +179,8 @@ class IIko:
             response = await client.post(
                 url, json=data, timeout=10.0, headers=headers
             )
+            if "There is no user with phone" in response.text:
+                return None
             if response.status_code != 200:
                 raise IIkoServerExeption(error=response.text)
             resp = response.json()

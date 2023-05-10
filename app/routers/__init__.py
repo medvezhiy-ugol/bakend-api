@@ -5,10 +5,12 @@ from app.routers.terminal import terminal_router
 from app.routers.organizations import organization_router
 from app.routers.roulette import roulette_router
 from app.routers.combo import combo_router
+from app.routers.profile import profile_router
 
 
 list_of_routes = [
     registr_router,
+    profile_router,
     menu_router,
     terminal_router,
     order_router,

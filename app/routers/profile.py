@@ -2,18 +2,12 @@ from datetime import timedelta
 
 from fastapi import APIRouter, Depends, status, Body
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.db.connection import get_session
 from app.schemas.profile import Profile
 from app.config import auth
-from app.auth.jwttoken import create_access_token
-from app.query.auth import check_nickname, create_user, find_by_nickname, get_info
 from app.auth.oauth2 import get_current_user
 from app.IIko import get_token_iiko
-from app.db.connection import Redis
-from app.schemas.exception import IncorrectCodeException, TimeOutCodeException
 import random
 from app.IIko import IIko
-from fastapi_jwt_auth import AuthJWT
 
 
 profile_router = APIRouter(tags=["Profile"])

@@ -2,19 +2,19 @@ version: '3.7'
 services:
   mongodb:
     container_name: "mongodb"
-    image: mongo:4.4
+    image: bitnami/mongodb
     hostname: mongodb
     restart: always
     volumes:
-      - mongo-data:/data/db
+      - mongo-data2:/bitnami/mongodb
     environment:
-      - MONGO_USER=aboba
-      - MONGO_PASSWORD=aboba
-      - MONGO_DATABASE=medvezhiy-ugol
+      - MONGODB_ROOT_USER=aboba
+      - MONGODB_ROOT_PASSWORD=aboba
+      - MONGODB_DATABASE=medvezhiy-ugol
     ports:
       - 27017:27017
-    networks:
-      - med-ugol
+    # networks:
+    #   - med-ugol
   db:
     image: postgres
     hostname: db
@@ -61,5 +61,5 @@ networks:
     name: med-ugol-network
 volumes:
   postgres-data:
-  mongo-data:
+  mongo-data2:
 

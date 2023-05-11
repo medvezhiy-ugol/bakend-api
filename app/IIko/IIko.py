@@ -16,6 +16,9 @@ class IIko:
         self.url_sms = "api/1/loyalty/iiko/message/send_sms"
         self.url_create_customer = "api/1/loyalty/iiko/customer/create_or_update"
         self.url_whoiam= "api/1/loyalty/iiko/customer/info"
+        self.url_payments_types = "api/1/payment_types"
+        self.url_order_types = "api/1/deliveries/order_types"
+        
 
 
     def __new__(cls):
@@ -203,6 +206,32 @@ class IIko:
             response = await client.post(
                 url, json=data, timeout=10.0, headers=headers
             )
+            if response.status_code != 200:
+                raise IIkoServerExeption(error=response.text)
+            resp = response.json()
+            return resp
+    
+    async def payments_org(self,org: str, token: str):
+        url = self.url_base + self.url_payments_types
+        data = {
+            "organizationIds": [f"{org}"],
+        }
+        headers = {"Authorization": f"Bearer {token}"}
+        async with httpx.AsyncClient() as client:
+            response = await client.post(url, json=data, timeout=10.0, headers=headers)
+            if response.status_code != 200:
+                raise IIkoServerExeption(error=response.text)
+            resp = response.json()
+            return resp
+        
+    async def order_payments(self,org: str, token: str):
+        url = self.url_base + self.url_order_types
+        data = {
+            "organizationIds": [f"{org}"],
+        }
+        headers = {"Authorization": f"Bearer {token}"}
+        async with httpx.AsyncClient() as client:
+            response = await client.post(url, json=data, timeout=10.0, headers=headers)
             if response.status_code != 200:
                 raise IIkoServerExeption(error=response.text)
             resp = response.json()

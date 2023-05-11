@@ -1,6 +1,6 @@
 from os import environ
-
-from pydantic import BaseSettings
+from typing import Optional, Mapping
+from pydantic import BaseSettings, MongoDsn, validator
 from dotenv import load_dotenv
 
 load_dotenv("local.env")
@@ -43,8 +43,10 @@ class DefaultSettings(BaseSettings):
         environ.get("ACCESS_TOKEN_EXPIRE_MINUTES", 100)
     )
     # Mongo Settings
-    MG_PATH: str = environ.get("MG_PATH", "mongodb")
+    MG_PATH: str = environ.get("MG_PATH", "localhost")
     MG_PORT: str = environ.get("MG_PORT", 27017)
+    MG_USER: str
+    MG_PASS: str
 
     # IIKO Settings
     API_LOGIN: str = environ.get("API_LOGIN")
@@ -96,6 +98,12 @@ class DefaultSettings(BaseSettings):
 
     @property
     def database_mongo(self) -> str:
-        return "mongodb://{host}:{port}/".format(
-            **self.mongo_settings,
+        return str(
+            MongoDsn.build(
+                scheme="mongodb",
+                user=self.MG_USER,
+                password=self.MG_PASS,
+                host=self.MG_PATH,
+                port=self.MG_PORT,
+            )
         )

@@ -1,16 +1,8 @@
 from motor.motor_asyncio import AsyncIOMotorClient
-from typing import Dict, List
+from typing import Dict
 from app.schemas.menu import (
     MenuCredits,
     MenuResponse,
-    taxCategoryModel,
-    allergenGroupModel,
-    tagModel,
-    itemSizeModel,
-    priceModel,
-    itemModifierGroupModel,
-    ItemsModel,
-    RestrictionsModel,
     ItemCategorie,
     ItemModel,
 )
@@ -20,7 +12,7 @@ async def write_to_mongo(document: Dict, client: AsyncIOMotorClient):
     menu = client.medvejie_ustie.menu
     # document["_id"] = document.pop("id")
     # добавить for для списка
-    result = await menu.update_one({"_id": document["id"]}, {"$set": document}, True)
+    await menu.update_one({"_id": document["id"]}, {"$set": document}, True)
 
 
 async def get_menu_mongo(menu: MenuCredits, client: AsyncIOMotorClient):

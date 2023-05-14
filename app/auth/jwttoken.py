@@ -1,10 +1,12 @@
 from datetime import datetime, timedelta
 from typing import Optional
 
-from jose import JWTError, jwt
+from jose import jwt
 
-from app.schemas.auth import TokenData
 from app.config import auth
+from app.schemas.auth import RefreshTokenView, TokenType
+from app.query.auth import decode_token
+from app.schemas.exception import DoNotUsuRefreshToken
 
 
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -> str:
@@ -18,16 +20,8 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -
     return encoded_jwt
 
 
-def verify_token(token: str, credentails_exception) -> str:
-    try:
-        playload = jwt.decode(
-            token.credentials, auth.SECRET_KEY, algorithms=[auth.ALGORITHM]
-        )
-        login: str = playload.get("sub")
-        if login is None:
-            raise credentails_exception
-        token_data = TokenData(login=login)
-
-    except JWTError:
-        raise credentails_exception from JWTError
-    return token_data.login
+def verify_token(token: str) -> str:
+    token: RefreshTokenView = decode_token(token)
+    if token.token_type_access == TokenType.REFRESH:
+        raise DoNotUsuRefreshToken
+    return token.sub

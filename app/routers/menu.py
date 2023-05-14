@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, status, Body, Query, Path
 from motor.motor_asyncio import AsyncIOMotorClientSession
 from app.db.connection import get_mongo_session
 from app.IIko import get_token_iiko, IIko
-from app.query.menu import get_menu_mongo, create_new_menu
+from app.query.menu import create_new_menu
 from app.schemas.menu import MenuCredits, MenuResponse, ItemModel
 from app.schemas.exception import ProductNotFoundException, MenuNotFoundException
 from uuid import UUID
@@ -55,10 +55,10 @@ async def get_product_from_menu(product_id: UUID = Query(...)):
 async def take_menu(
     token: str = Depends(get_token_iiko),
     session_mdb: AsyncIOMotorClientSession = Depends(get_mongo_session),
-    id_menu:int = Path(...),
+    id_menu: int = Path(...),
     sesion_iiko: IIko = Depends(IIko),
 ):
-    new_menu = await sesion_iiko.take_menu_byid(token,id_menu)
-   # menu_resp: MenuResponse = await create_new_menu(**new_menu)
-    #await menu_resp.save()
+    new_menu = await sesion_iiko.take_menu_byid(token, id_menu)
+    menu_resp: MenuResponse = await create_new_menu(**new_menu)
+    await menu_resp.save()
     return new_menu

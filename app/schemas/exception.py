@@ -78,3 +78,13 @@ class IncorrectCodeException(CommonException):
 class TimeOutCodeException(CommonException):
     def __init__(self, error: str) -> None:
         super().__init__(status.HTTP_403_FORBIDDEN, error)
+
+
+class NoRefreshToken(CommonException):
+    def __init__(self) -> None:
+        super().__init__(status.HTTP_401_UNAUTHORIZED, "Provide refresh_token; Not access")
+
+
+class DoNotUsuRefreshToken(CommonException):
+    def __init__(self) -> None:
+        super().__init__(status.HTTP_403_FORBIDDEN, "Use access token to get data; Not refresh")

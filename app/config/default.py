@@ -1,6 +1,5 @@
 from os import environ
-from typing import Optional, Mapping
-from pydantic import BaseSettings, MongoDsn, validator
+from pydantic import BaseSettings, MongoDsn
 from dotenv import load_dotenv
 
 load_dotenv("local.env")
@@ -21,6 +20,7 @@ class DefaultSettings(BaseSettings):
 
     ENV: str = environ.get("ENV", "local")
     # APP Settings
+    APP_NAME: str = "medugol"
     PATH_PREFIX: str = environ.get("PATH_PREFIX", "/v1")
     APP_HOST: str = environ.get("APP_HOST", "http://0.0.0.0")
     APP_PORT: int = int(environ.get("APP_PORT", 8080))
@@ -42,6 +42,10 @@ class DefaultSettings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = int(
         environ.get("ACCESS_TOKEN_EXPIRE_MINUTES", 100)
     )
+
+    JWT_SECRET: str
+    JWT_ALG: str
+
     # Mongo Settings
     MG_PATH: str = environ.get("MG_PATH", "localhost")
     MG_PORT: str = environ.get("MG_PORT", 27017)
@@ -53,7 +57,6 @@ class DefaultSettings(BaseSettings):
 
     # Redis
     REDIS_URL: str
-
 
     @property
     def database_settings(self) -> dict:

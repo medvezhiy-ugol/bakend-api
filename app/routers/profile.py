@@ -6,7 +6,6 @@ from app.schemas.profile import Profile
 from app.config import auth
 from app.auth.oauth2 import get_current_user
 from app.IIko import get_token_iiko
-import random
 from app.IIko import IIko
 
 
@@ -20,7 +19,7 @@ async def get_info_user(
     token: str = Depends(get_token_iiko),
     sesion_iiko: IIko = Depends(IIko)
 ):
-    resp = await sesion_iiko.get_user(current_user,token)
+    resp = await sesion_iiko.get_user(current_user, token)
     return resp
 
 

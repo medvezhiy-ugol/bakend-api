@@ -1,7 +1,15 @@
 import httpx
 from app.schemas.exception import IIkoServerExeption
-from typing import Dict
+from typing import Dict, Optional
 from app.schemas.terminal import TerminalModel
+from enum import Enum
+
+
+class chequeAdditionalInfoView(Enum):
+    needReceipt: Optional[bool]
+    email: Optional[str]
+    settlementPlace: Optional[str]
+    phone: Optional[str]
 
 
 class IIko:
@@ -15,11 +23,10 @@ class IIko:
         self.url_combo = "api/1/combo"
         self.url_sms = "api/1/loyalty/iiko/message/send_sms"
         self.url_create_customer = "api/1/loyalty/iiko/customer/create_or_update"
-        self.url_whoiam= "api/1/loyalty/iiko/customer/info"
+        self.url_whoiam = "api/1/loyalty/iiko/customer/info"
         self.url_payments_types = "api/1/payment_types"
         self.url_order_types = "api/1/deliveries/order_types"
-        
-
+        self.url_close_order = "api/1/order/close"
 
     def __new__(cls):
         if not hasattr(cls, "instance"):
@@ -169,8 +176,7 @@ class IIko:
             resp = response.json()
             return resp
 
-    
-    async def get_user(self,phone: str, token: str):
+    async def get_user(self, phone: str, token: str):
         url = self.url_base + self.url_whoiam
         data = {
             "phone": phone,
@@ -224,11 +230,47 @@ class IIko:
             resp = response.json()
             return resp
         
-    async def order_payments(self,org: str, token: str):
+    async def order_payments(self, org: str, token: str):
         url = self.url_base + self.url_order_types
         data = {
             "organizationIds": [f"{org}"],
         }
+        headers = {"Authorization": f"Bearer {token}"}
+        async with httpx.AsyncClient() as client:
+            response = await client.post(url, json=data, timeout=10.0, headers=headers)
+            if response.status_code != 200:
+                raise IIkoServerExeption(error=response.text)
+            resp = response.json()
+            return resp
+
+    async def close_order(
+            self,
+            token: str,
+            organizationId: str,
+            orderId: str,
+            chequeAdditionalInfo: chequeAdditionalInfoView = None
+            ):
+        url = self.url_base + self.url_close_order
+        data = {
+            "organizationId": organizationId,
+            "orderId": orderId,
+        }
+        if chequeAdditionalInfo:
+            data.setdefault("chequeAdditionalInfo", {
+                "needReceipt": None,
+                "email": None,
+                "settlementPlace": None,
+                "phone": None
+            })
+            if chequeAdditionalInfo.needReceipt:
+                data['chequeAdditionalInfo']['needReceipt'] = chequeAdditionalInfo.needReceipt
+            if chequeAdditionalInfo.email:
+                data['chequeAdditionalInfo']['email'] = chequeAdditionalInfo.email
+            if chequeAdditionalInfo.settlementPlace:
+                data['chequeAdditionalInfo']['settlementPlace'] = chequeAdditionalInfo.settlementPlace
+            if chequeAdditionalInfo.phone:
+                data['chequeAdditionalInfo']['phone'] = chequeAdditionalInfo.phone
+
         headers = {"Authorization": f"Bearer {token}"}
         async with httpx.AsyncClient() as client:
             response = await client.post(url, json=data, timeout=10.0, headers=headers)

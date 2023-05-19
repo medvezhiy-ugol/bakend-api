@@ -1,6 +1,5 @@
 from fastapi import APIRouter, Depends, status, Body, Query
 from app.IIko import get_token_iiko, IIko
-from app.query.menu import get_menu_mongo, create_new_menu
 from app.schemas.combo import ComboCredits, Combo, ComboCategorie, Group
 from app.schemas.exception import ComboNotFoundException
 from uuid import UUID

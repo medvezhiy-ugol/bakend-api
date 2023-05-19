@@ -1,5 +1,5 @@
-from pydantic import BaseModel
-from beanie import Document, Link
+from pydantic import BaseModel, Field
+from beanie import Document, Link, BackLink
 from typing import List, Optional
 
 
@@ -129,19 +129,31 @@ class ItemModel(Document):
     # id itemCategorie
 
 
-class ItemCategorie(Document):
-    items: List[Link[ItemModel]]
-    id: NewUuid
-    name: str
-    description: str
-    buttonImageUrl: str | None
-    headerImageUrl: str | None
-    iikoGroupId: NewUuid | None
 
 
 class MenuResponse(Document):
     id: int
     name: str
     description: str
-    itemCategories: List[Link[ItemCategorie]]
+    itemCategories: List[Link["ItemCategorie"]]
     comboCategories: list
+
+class ItemCategorie(Document):
+    items: List[Link[ItemModel]]
+    menu_id: BackLink[MenuResponse] = Field(original_field="itemCategories")
+    id: NewUuid
+    name: str
+    description: str
+    buttonImageUrl: str | None
+    headerImageUrl: str | None
+    iikoGroupId: NewUuid | None
+    
+
+class ItemCategorieOut(BaseModel):
+    items: List[ItemModel]
+    _id: NewUuid
+    name: str
+    description: str
+    buttonImageUrl: str | None
+    headerImageUrl: str | None
+    iikoGroupId: NewUuid | None

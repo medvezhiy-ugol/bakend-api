@@ -55,7 +55,7 @@ services:
     environment:
         - ALLOW_EMPTY_PASSWORD=yes
     networks:
-       - med-ugol
+        - med-ugol
 networks:
   med-ugol:
     name: med-ugol-network

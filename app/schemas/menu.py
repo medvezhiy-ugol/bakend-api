@@ -1,5 +1,5 @@
-from pydantic import BaseModel
-from beanie import Document, Link
+from pydantic import BaseModel, Field
+from beanie import Document, Link, BackLink
 from typing import List, Optional
 
 
@@ -115,6 +115,19 @@ class itemSizeModel(BaseModel):
     buttonImageCroppedUrl: dict | None
 
 
+
+    # id itemCategorie
+
+
+
+
+class MenuResponse(Document):
+    id: int
+    name: str
+    description: str
+    itemCategories: List[Link["ItemCategorie"]]
+    comboCategories: list
+
 class ItemModel(Document):
     itemSizes: List[itemSizeModel]
     sku: str
@@ -126,11 +139,12 @@ class ItemModel(Document):
     taxCategory: taxCategoryModel | None
     orderItemType: str
     modifierSchemaId: Optional[NewUuid]
-    # id itemCategorie
+    category_id: NewUuid
 
 
 class ItemCategorie(Document):
     items: List[Link[ItemModel]]
+    menu_id: BackLink[MenuResponse] = Field(original_field="itemCategories")
     id: NewUuid
     name: str
     description: str
@@ -139,9 +153,24 @@ class ItemCategorie(Document):
     iikoGroupId: NewUuid | None
 
 
-class MenuResponse(Document):
-    id: int
+
+class ItemCategorieOut(BaseModel):
+    id: NewUuid = Field(...,exclude=False)
     name: str
     description: str
-    itemCategories: List[Link[ItemCategorie]]
-    comboCategories: list
+    buttonImageUrl: str | None
+    headerImageUrl: str | None
+    iikoGroupId: NewUuid | None
+
+
+class ItemModelOut(Document):
+    itemSizes: List[itemSizeModel]
+    sku: str
+    name: str
+    description: str
+    allergenGroups: List[allergenGroupModel] | None
+    itemId: NewUuid
+    modifierSchemaId: NewUuid
+    taxCategory: taxCategoryModel | None
+    orderItemType: str
+    modifierSchemaId: Optional[NewUuid]

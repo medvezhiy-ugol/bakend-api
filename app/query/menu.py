@@ -15,20 +15,16 @@ async def write_to_mongo(document: Dict, client: AsyncIOMotorClient):
     await menu.update_one({"_id": document["id"]}, {"$set": document}, True)
 
 
-async def get_menu_mongo(menu: MenuCredits, client: AsyncIOMotorClient):
-    menu = client.medvejie_ustie.menu
-    # ХЗ как искать
-    resp = await menu.find({"_id": str(menu.externalMenuId)}).to_list(length=None)
-    return resp
-
 
 async def create_new_menu(**resp) -> MenuResponse:
     itemCategories = []
     for itemcategory in resp["itemCategories"]:
         itemDocs = []
+        category_id = itemcategory["id"]
         for item in itemcategory["items"]:
+            item["category_id"] = category_id
             itemDoc = await ItemModel(**dict(item)).save()
             itemDocs.append(itemDoc)
         itemcategory["item"] = itemDocs
     itemCategories.append(ItemCategorie(**itemcategory))
-    return MenuResponse(**resp)
+    return resp

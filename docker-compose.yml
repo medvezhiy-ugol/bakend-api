@@ -54,8 +54,8 @@ services:
       - 6379:6379
     environment:
         - ALLOW_EMPTY_PASSWORD=yes
-    # networks:
-    #    - med-ugol
+    networks:
+        - med-ugol
 networks:
   med-ugol:
     name: med-ugol-network

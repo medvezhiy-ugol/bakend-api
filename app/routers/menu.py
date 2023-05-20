@@ -4,9 +4,10 @@ from motor.motor_asyncio import AsyncIOMotorClientSession
 from app.db.connection import get_mongo_session
 from app.IIko import get_token_iiko, IIko
 from app.query.menu import create_new_menu
-from app.schemas.menu import MenuCredits, MenuResponse, ItemModel, ItemCategorie, ItemCategorieOut
+from app.schemas.menu import MenuCredits, MenuResponse, ItemModel, ItemCategorie, ItemCategorieOut, ItemModelOut
 from app.schemas.exception import ProductNotFoundException, MenuNotFoundException
 from uuid import UUID
+from app.schemas.menu import NewUuid
 from beanie import WriteRules
 
 
@@ -33,12 +34,40 @@ async def get_menu(
 ):
     # ВОзможно на проде здесь будет ошибка
     menu = await ItemCategorie.find(ItemCategorie.menu_id.id== menu_org.externalMenuId,
-                                   skip=0,
-                                   limit=5).to_list()
+                                    fetch_links=True
+                                    ).to_list()
     
     if not menu:
         raise MenuNotFoundException(error="Меню не найдено")
-    return menu
+    list_category = []
+    for itemcategory in menu:
+        item_new = ItemCategorieOut(**itemcategory.dict())
+        list_category.append(item_new)
+    return list_category
+
+
+@menu_router.get(
+    "/menu/category/{category_id}/{skip}/{limit}",
+    status_code=status.HTTP_200_OK,
+    response_model=List[ItemModel],
+    response_model_exclude={"_id"},
+    responses={status.HTTP_404_NOT_FOUND: {"detail": "Продуктов в категории не найден"}},
+)
+async def get_menu(
+    category_id: UUID = Path(...),
+    skip: int = Path(...),
+    limit: int = Path(...),
+):
+    # ВОзможно на проде здесь будет ошибка
+    menu_product = await ItemModel.find(ItemModel.category_id== str(category_id),
+                                skip=skip,
+                                limit=limit,
+                                fetch_links=True
+                                ).to_list()
+    
+    if not menu_product:
+        raise MenuNotFoundException(error="Продуктов в категории не найден")
+    return menu_product
 
 
 @menu_router.get(

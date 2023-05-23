@@ -10,4 +10,4 @@ COPY ./app /code/app
 
 
 CMD	["alembic", "-c", "app/db/alembic.ini", "upgrade", "head"]
-CMD ["uvicorn", "app.api:app", "--host", "0.0.0.0", "--port", "80"]
+CMD ["uvicorn", "app.api:app", "--host", "0.0.0.0", "--port", "8080"]

@@ -3,17 +3,18 @@ from datetime import datetime, timedelta
 from app.db import models
 from sqlalchemy.orm import Session
 from sqlalchemy import create_engine
+from app.config.get_settings import auth, get_settings
 
 
-app = Celery("tasks", broker="redis://localhost:6379/0", backend="redis://localhost:6379/1")
+app = Celery("tasks", broker=f"{auth.REDIS_URL}/0", backend=f"{auth.REDIS_URL}/1")
 counter = 0
+engine = create_engine(get_settings().database_uri)
 
 
 @app.task
 def create_new_roulette(*args):
-    global counter
+    global counter, engine
     counter += 1
-    engine = create_engine("postgresql://postgres:postgres@localhost:6432/medvezhiy-ugol")
     with Session(engine) as session:
         new_roulette = models.Roulette(
             title=f"Рулетка №{counter}",
@@ -24,7 +25,6 @@ def create_new_roulette(*args):
         )
         session.add(new_roulette)
         session.commit()
-    counter += 1
 
 
 app.conf.beat_schedule = {

@@ -1,12 +1,12 @@
 from celery import Celery
-from datetime import datetime, timedelta
+from datetime import timedelta, date
 from app.db import models
 from sqlalchemy.orm import Session
 from sqlalchemy import create_engine
 from app.config.get_settings import auth, get_settings
 
 
-app = Celery("tasks", broker=f"{auth.REDIS_URL}/0", backend=f"{auth.REDIS_URL}/1")
+app = Celery("tasks", broker=auth.CELERY_BROKER_URL, backend=auth.CELERY_BACKEND_URL)
 counter = 0
 engine = create_engine(get_settings().database_uri)
 
@@ -18,10 +18,10 @@ def create_new_roulette(*args):
     with Session(engine) as session:
         new_roulette = models.Roulette(
             title=f"Рулетка №{counter}",
-            start=str(datetime.now().date()),
-            end=str(datetime.now().date() + timedelta(days=7)),
+            start=str(date.today()),
+            end=str(date.today() + timedelta(days=7)),
             score=0,
-            winners_count=100
+            winners_count=auth.WINNERS_COUNT
         )
         session.add(new_roulette)
         session.commit()

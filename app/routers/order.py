@@ -1,7 +1,9 @@
 from app.schemas.order import OrderCreate, OrderResponse, OrderResponsePydantic
 from fastapi import APIRouter, status, Body, Depends
 from app.IIko import get_token_iiko, IIko
+from typing import List
 import json
+from fastapi import APIRouter, Depends, status, Body, Query, Path
 from datetime import datetime
 from uuid import UUID
 from app.auth.oauth2 import get_current_user
@@ -9,13 +11,6 @@ from motor.motor_asyncio import AsyncIOMotorClientSession
 from app.db.connection import get_mongo_session
 
 order_router = APIRouter(tags=["Orders"])
-
-class UUIDEncoder(json.JSONEncoder):
-    def default(self, obj):
-        if isinstance(obj, UUID):
-            # if the obj is uuid, we simply return the value of uuid
-            return obj.hex
-        return json.JSONEncoder.default(self, obj)
 
 
 @order_router.post("/create", status_code=status.HTTP_200_OK)
@@ -35,4 +30,22 @@ async def create_new_order(
     return response
 
 
-# get_history_by_user_id + paginate
+@order_router.get(
+    "/get_history/{skip}/{limit}",
+    status_code=status.HTTP_200_OK,
+    response_model=List[OrderResponse],
+    response_model_exclude={"_id"},
+    responses={status.HTTP_404_NOT_FOUND: {"detail": "Продуктов в категории не найден"}},
+)
+async def get_history_by_user(
+    current_user: str = Depends(get_current_user),
+    skip: int = Path(...),
+    limit: int = Path(...),
+):
+    menu_product = await OrderResponse.find(
+        OrderResponse.user_id == current_user,
+        skip=skip,
+        limit=limit,
+        fetch_links=True
+    ).to_list()
+    return menu_product

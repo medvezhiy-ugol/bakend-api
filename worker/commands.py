@@ -19,7 +19,7 @@ def create_new_roulette(*args):
         new_roulette = models.Roulette(
             title=f"Рулетка №{counter}",
             start=str(date.today()),
-            end=str(date.today() + timedelta(days=7)),
+            end=str(date.today() + timedelta(days=auth.ROULETTE_DAYS_PERIOD)),
             score=0,
             winners_count=auth.WINNERS_COUNT
         )

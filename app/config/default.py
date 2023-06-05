@@ -57,9 +57,10 @@ class DefaultSettings(BaseSettings):
 
     # Redis
     REDIS_URL: str
-    CELERY_BROKER_URL: str = environ.get("CELERY_BROKER_URL", "redis://localhost:6379/0")
-    CELERY_BACKEND_URL: str = environ.get("CELERY_BACKEND_URL", "redis://localhost:6379/1")
-    WINNERS_COUNT: int = environ.get("WINNERS_COUNT", 100)
+    CELERY_BROKER_URL: str
+    CELERY_BACKEND_URL: str
+    WINNERS_COUNT: int
+    ROULETTE_DAYS_PERIOD: int
 
     @property
     def database_settings(self) -> dict:

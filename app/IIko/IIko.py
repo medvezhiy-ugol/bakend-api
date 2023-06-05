@@ -2,6 +2,7 @@ import httpx
 from app.schemas.exception import IIkoServerExeption
 from typing import Dict
 from app.schemas.terminal import TerminalModel
+from app.schemas.order import OrderCreate
 
 
 class IIko:
@@ -77,17 +78,17 @@ class IIko:
             resp = response.json()
             return resp
 
-    async def create_order(self, token: str, **data: Dict) -> Dict:
+    async def create_order(self, token: str, data: OrderCreate) -> Dict:
         url = self.url_base + self.url_order
         headers = {"Authorization": f"Bearer {token}"}
         async with httpx.AsyncClient() as client:
-            response = await client.post(url, json=data, timeout=10.0, headers=headers)
+            response = await client.post(url, json=data.json(), timeout=10.0, headers=headers)
             if response.status_code != 200:
                 raise IIkoServerExeption(error=response.text)
                 # TODO может сделат ьсериализацию и отправку??
             resp = response.json()
             return resp
-
+ 
     async def get_organiztions(self, token: str) -> Dict:
         url = self.url_base + self.url_orgs
         headers = {"Authorization": f"Bearer {token}"}

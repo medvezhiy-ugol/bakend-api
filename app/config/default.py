@@ -57,6 +57,10 @@ class DefaultSettings(BaseSettings):
 
     # Redis
     REDIS_URL: str
+    CELERY_BROKER_URL: str
+    CELERY_BACKEND_URL: str
+    WINNERS_COUNT: int
+    ROULETTE_DAYS_PERIOD: int
 
     @property
     def database_settings(self) -> dict:

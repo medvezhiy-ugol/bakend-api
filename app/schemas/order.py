@@ -2,7 +2,7 @@ from typing import Optional, List
 from pydantic import BaseModel, Field
 from uuid import UUID
 from datetime import datetime
-
+from beanie import Document
 
 class ComboInformationModel(BaseModel):
     comboId: UUID
@@ -13,9 +13,11 @@ class ComboInformationModel(BaseModel):
 class ItemsModel(BaseModel):
     type: str
     amount: int
-    productSizeId: UUID
-    comboInformation: ComboInformationModel
-    comment: str
+    productSizeId: UUID | None
+    productId: UUID
+    comboInformation: ComboInformationModel | None
+    comment: str | None
+    price: int
 
 
 class GuestsModel(BaseModel):
@@ -25,14 +27,14 @@ class GuestsModel(BaseModel):
 class CustomerModel(BaseModel):
     id: UUID
     name: str
-    surname: str
+    surname: str | None
     comment: str
-    birthdate: datetime  # ПОФИКСИТЬ ПРИ ТЕСТАХ
-    email: str
-    shouldReceivePromoActionsInfo: bool
-    shouldReceiveOrderStatusNotifications: bool
+    birthdate: str | None  # ПОФИКСИТЬ ПРИ ТЕСТАХ
+    email: str | None
+    shouldReceivePromoActionsInfo: bool | None
+    shouldReceiveOrderStatusNotifications: bool | None
     # gender: ???????????????????????????????????????????????????
-    type: str
+    type: str | None
 
 
 class TableIdsModel(BaseModel):
@@ -49,16 +51,16 @@ class CombosModel(BaseModel):
 
 
 class PaymentAdditionalDataModel(BaseModel):
-    type: str
+    type: str 
 
 
 class PaymentsModel(BaseModel):
     paymentTypeKind: str
     sum: int
     paymentTypeId: UUID
-    isProcessedExternally: bool
-    paymentAdditionalData: PaymentAdditionalDataModel
-    isFiscalizedExternally: bool
+    isProcessedExternally: bool | None
+    paymentAdditionalData: PaymentAdditionalDataModel | None
+    isFiscalizedExternally: bool | None
 
 
 class TipsModel(BaseModel):
@@ -67,7 +69,7 @@ class TipsModel(BaseModel):
     sum: int
     paymentTypeId: UUID
     isProcessedExternally: bool
-    paymentAdditionalData: PaymentAdditionalDataModel
+    paymentAdditionalData: PaymentAdditionalDataModel | None
     isFiscalizedExternally: bool
 
 
@@ -89,24 +91,58 @@ class IikoCard5InfoModel(BaseModel):
     applicableManualConditions: List[UUID]
 
 
-class Order(BaseModel):
-    id: UUID
-    externalNumber: str
-    tableIds: List[TableIdsModel]
-    customer: CustomerModel
-    phone: str
-    guests: GuestsModel
-    tabName: str
+class OrderDraft(BaseModel):
+    menuId = "11672"
+    id: UUID | None
+    externalNumber: str | None
+    tableIds: List[TableIdsModel] | None
+    customer: CustomerModel | None
+    phone: str | None
+    guests: GuestsModel | None
+    tabName: str | None
     items: List[ItemsModel]
-    combos: List[CombosModel]
+    combos: List[CombosModel] | None
     payments: List[PaymentsModel]
-    tips: List[TipsModel]
-    sourceKey: str
-    discountsInfo: DiscountsInfoModel
-    iikoCard5Info: IikoCard5InfoModel
+    tips: List[TipsModel] | None
+    sourceKey: str | None
+    discountsInfo: DiscountsInfoModel | None
+    iikoCard5Info: IikoCard5InfoModel | None
     orderTypeId: UUID
 
+class Street(BaseModel):
+    name: str
+    city: str
 
+class DeliveryAddress(BaseModel):
+    street: Street
+    house: str
+
+class Delivery(BaseModel):
+    address: DeliveryAddress
+    comment: str | None
+    
+class Order(BaseModel):
+    id: UUID | None
+    completeBefore: str | None
+    externalNumber: str | None
+    tableIds: List[TableIdsModel] | None
+    customer: CustomerModel | None
+    phone: str | None
+    guests: GuestsModel | None
+    tabName: str | None
+    items: List[ItemsModel]
+    combos: List[CombosModel] | None
+    payments: List[PaymentsModel]
+    tips: List[TipsModel] | None
+    sourceKey: str | None
+    discountsInfo: DiscountsInfoModel | None
+    iikoCard5Info: IikoCard5InfoModel | None
+    orderTypeId: UUID
+    deliveryPoint:Delivery | None
+
+
+
+    
 class createOrderSettingsModel(BaseModel):
     transportToFrontTimeout: int
 
@@ -115,7 +151,7 @@ class OrderCreate(BaseModel):
     organizationId: UUID
     terminalGroupId: UUID
     order: Order
-    createOrderSettings: createOrderSettingsModel
+    createOrderSettings: createOrderSettingsModel | None
 
 
 class ErrorInfoModel(BaseModel):
@@ -124,15 +160,38 @@ class ErrorInfoModel(BaseModel):
 
 class OrderInfoModel(BaseModel):
     id: UUID
-    posId: UUID
-    externalNumber: str
+    posId: UUID | None
+    externalNumber: str | None
     organizationId: UUID
     timestamp: int
     creationStatus: str
-    errorInfo: ErrorInfoModel
-    # order:
+    errorInfo: ErrorInfoModel | None
+    order: Order | None
 
 
-class OrderResponse(BaseModel):
+class OrderResponsePydantic(BaseModel):
     correlationId: UUID
     orderInfo: OrderInfoModel
+
+class OrderResponse(Document):
+    id: UUID
+    user_id: str
+    orderInfo: OrderInfoModel
+
+
+class OrderCreateDraft(BaseModel):
+    organizationId: UUID
+    terminalGroupId: UUID
+    order: OrderDraft
+    createOrderSettings: createOrderSettingsModel | None
+    createdAt: str | None
+    lockedByUser: str | None
+    employeeId: str  | None
+
+class TinkoffRequest(BaseModel):
+    TerminalKey: str
+    OrderId: str
+    Success: bool
+    Amount: int
+    Token: str
+    PaymentId: str

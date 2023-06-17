@@ -62,6 +62,12 @@ class DefaultSettings(BaseSettings):
     WINNERS_COUNT: int
     ROULETTE_DAYS_PERIOD: int
 
+
+    # TINKOFF
+    TINKOFF_TERMINAL: str
+    URL_CONFIRM: str
+
+
     @property
     def database_settings(self) -> dict:
         """

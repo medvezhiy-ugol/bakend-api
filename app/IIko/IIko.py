@@ -2,6 +2,7 @@ import httpx
 from app.schemas.exception import IIkoServerExeption
 from typing import Dict
 from app.schemas.terminal import TerminalModel
+from app.schemas.order import OrderCreate, OrderCreateDraft
 
 
 class IIko:
@@ -9,15 +10,18 @@ class IIko:
         self.url_base = "https://api-ru.iiko.services/"
         self.url_menu = "api/2/menu/by_id"
         self.url_orgs = "api/1/reserve/available_organizations"
-        self.url_term = "api/1/terminal_groups"
-        self.url_order = "api/1/order/create"
-        self.url_menu_id = "api/2/menu"
-        self.url_combo = "api/1/combo"
-        self.url_sms = "api/1/loyalty/iiko/message/send_sms"
+        self.url_term= "api/1/terminal_groups"
+        self.url_order="api/1/deliveries/create"
+        self.url_menu_id="api/2/menu"
+        self.url_combo="api/1/combo"
+        self.url_sms="api/1/loyalty/iiko/message/send_sms"
         self.url_create_customer = "api/1/loyalty/iiko/customer/create_or_update"
         self.url_whoiam= "api/1/loyalty/iiko/customer/info"
         self.url_payments_types = "api/1/payment_types"
         self.url_order_types = "api/1/deliveries/order_types"
+        self.url_create_draft = "api/1/deliveries/drafts/save"
+        self.url_get_dfraft="api/1/deliveries/drafts/by_id"
+        self.url_delete_draft="api/1/deliveries/drafts/delete"
         
 
 
@@ -26,6 +30,47 @@ class IIko:
             cls.instance = super(IIko, cls).__new__(cls)
         return cls.instance
     
+    async def create_draft_iiko(self,token,data: OrderCreateDraft):
+        url = self.url_base + self.url_create_draft
+        headers = {"Authorization": f"Bearer {token}"}
+        
+        async with httpx.AsyncClient() as client:
+            response = await client.post(url, json=data.json(), timeout=10.0, headers=headers)
+            if response.status_code != 200:
+                raise IIkoServerExeption(error=response.text)
+                # TODO может сделат ьсериализацию и отправку??
+            resp = response.json()
+            return resp
+    
+    async def get_draft(self,token: str,organizationId, orderId):
+        url = self.url_base + self.url_get_dfraft
+        headers = {"Authorization": f"Bearer {token}"}
+        data = {
+            "organizationId": organizationId,
+            "orderId": orderId
+        }
+        async with httpx.AsyncClient() as client:
+            response = await client.post(url, timeout=10.0,data=data,headers=headers)
+            if response.status_code != 200:
+                raise IIkoServerExeption(error=response.text)
+            resp = response.json()
+            return resp
+    
+    
+    async def del_draft(self,token: str,organizationId,orderId) -> None:
+        url = self.url_base + self.url_delete_draft
+        headers = {"Authorization": f"Bearer {token}"}
+        data = {
+            "organizationId": organizationId,
+            "orderId": orderId
+}
+        async with httpx.AsyncClient() as client:
+            response = await client.post(url, json=data, timeout=10.0, headers=headers)
+            if response.status_code != 200:
+                raise IIkoServerExeption(error=response.text)
+
+
+
     async def auth_phone(self, phone: str):
         url = self.url_auth_phone
         data = {
@@ -77,17 +122,17 @@ class IIko:
             resp = response.json()
             return resp
 
-    async def create_order(self, token: str, **data: Dict) -> Dict:
+    async def create_order(self, token: str, data: OrderCreate) -> Dict:
         url = self.url_base + self.url_order
         headers = {"Authorization": f"Bearer {token}"}
         async with httpx.AsyncClient() as client:
-            response = await client.post(url, json=data, timeout=10.0, headers=headers)
+            response = await client.post(url, json=data.json(), timeout=10.0, headers=headers)
             if response.status_code != 200:
                 raise IIkoServerExeption(error=response.text)
                 # TODO может сделат ьсериализацию и отправку??
             resp = response.json()
             return resp
-
+ 
     async def get_organiztions(self, token: str) -> Dict:
         url = self.url_base + self.url_orgs
         headers = {"Authorization": f"Bearer {token}"}

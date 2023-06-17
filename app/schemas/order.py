@@ -91,12 +91,13 @@ class IikoCard5InfoModel(BaseModel):
     applicableManualConditions: List[UUID]
 
 
-class Order(BaseModel):
+class OrderDraft(BaseModel):
+    menuId = "11672"
     id: UUID | None
     externalNumber: str | None
     tableIds: List[TableIdsModel] | None
-    customer: CustomerModel
-    phone: str
+    customer: CustomerModel | None
+    phone: str | None
     guests: GuestsModel | None
     tabName: str | None
     items: List[ItemsModel]
@@ -108,7 +109,40 @@ class Order(BaseModel):
     iikoCard5Info: IikoCard5InfoModel | None
     orderTypeId: UUID
 
+class Street(BaseModel):
+    name: str
+    city: str
 
+class DeliveryAddress(BaseModel):
+    street: Street
+    house: str
+
+class Delivery(BaseModel):
+    address: DeliveryAddress
+    comment: str | None
+    
+class Order(BaseModel):
+    id: UUID | None
+    completeBefore: str | None
+    externalNumber: str | None
+    tableIds: List[TableIdsModel] | None
+    customer: CustomerModel | None
+    phone: str | None
+    guests: GuestsModel | None
+    tabName: str | None
+    items: List[ItemsModel]
+    combos: List[CombosModel] | None
+    payments: List[PaymentsModel]
+    tips: List[TipsModel] | None
+    sourceKey: str | None
+    discountsInfo: DiscountsInfoModel | None
+    iikoCard5Info: IikoCard5InfoModel | None
+    orderTypeId: UUID
+    deliveryPoint:Delivery | None
+
+
+
+    
 class createOrderSettingsModel(BaseModel):
     transportToFrontTimeout: int
 
@@ -143,3 +177,21 @@ class OrderResponse(Document):
     id: UUID
     user_id: str
     orderInfo: OrderInfoModel
+
+
+class OrderCreateDraft(BaseModel):
+    organizationId: UUID
+    terminalGroupId: UUID
+    order: OrderDraft
+    createOrderSettings: createOrderSettingsModel | None
+    createdAt: str | None
+    lockedByUser: str | None
+    employeeId: str  | None
+
+class TinkoffRequest(BaseModel):
+    TerminalKey: str
+    OrderId: str
+    Success: bool
+    Amount: int
+    Token: str
+    PaymentId: str

@@ -51,7 +51,9 @@ class CombosModel(BaseModel):
 
 
 class PaymentAdditionalDataModel(BaseModel):
-    type: str 
+    credential: str 
+    searchScope: str
+    type: str
 
 
 class PaymentsModel(BaseModel):

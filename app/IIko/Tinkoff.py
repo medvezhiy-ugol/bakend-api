@@ -2,7 +2,7 @@ from typing import List
 import httpx
 #from app.schemas.exception import TinkoffException
 from app.config import auth
-from app.schemas.order import ItemsModel
+from app.schemas.order import ItemsModel, PaymentsModel
 import datetime
 
 
@@ -18,10 +18,11 @@ class Tinkoff:
         return cls.instance
     
     
-    async def init_tinkoff(self,order_id, Items: List[ItemsModel]):
+    async def init_tinkoff(self,order_id, Items: List[ItemsModel],discount: float):
+        sum_order = sum(map(lambda item: item.amount* item.price,Items))
         data = {
             "TerminalKey": f"{auth.TINKOFF_TERMINAL}",
-            "Amount": sum(map(lambda item: item.amount* item.price,Items))* 100,
+            "Amount": sum_order * 100 - discount *100,
             "OrderId": f"{order_id}",
             "Description": f"Заказ {order_id} в Медвежьем Угле",
             "NotificationURL": auth.URL_CONFIRM,
@@ -30,7 +31,11 @@ class Tinkoff:
                 "Email": "",
                 "Phone": "+78005553535",
                 "EmailCompany": "",
-                "Taxation": "osn",
+                "Payments": {
+                    "Electronic": sum_order * 100 - discount *100,
+                    "Provision": discount * 100
+                },
+                "Taxation": "usn_income",
                 "Items": [ {"Name": f"Заказ №{order_id}",
                             "Price": item.price * 100,
                             "Quantity": item.amount,

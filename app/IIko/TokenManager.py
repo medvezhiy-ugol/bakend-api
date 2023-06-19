@@ -25,7 +25,7 @@ class TokenManager:
         return cls.instance
 
     def get_token(self):
-        if perf_counter() - self.time_create >= 10:
+        if perf_counter() - self.time_create >= 40 * 10000:
             self.loop.run_until_complete(self.refresh())
         return self.token
 

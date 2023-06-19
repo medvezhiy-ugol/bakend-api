@@ -14,6 +14,7 @@ from uuid import uuid4
 from app.IIko.Tinkoff import Tinkoff
 from app.schemas.exception import BadRequest
 import json
+from copy import deepcopy
 
 order_router = APIRouter(tags=["Orders"])
 
@@ -31,8 +32,16 @@ async def create_order(
         raise BadRequest(error="Заказ не принят")
     order = OrderCreate(**json.loads(data))
     user_phone = order.order.phone
+    
+    resp = await sesion_iiko.get_user(user_phone, token)
+    payment = next(filter(lambda payment: payment.paymentTypeKind == "IikoCard",order.order.payments), None)
+    if payment is None:
+        discount = 0
+    else:
+        discount = deepcopy(payment.sum)
+        del(order.order.payments[1])
+        resp = await sesion_iiko.change_balance(token,resp["walletBalances"][0]["id"],resp["id"],discount,order.organizationId,False)
     response = await sesion_iiko.create_order(token, data=order)
-
     await OrderResponse(**response, user_id=user_phone,id=response['orderInfo']['id']).save()
     return response
 
@@ -49,9 +58,17 @@ async def create_new_order(
     uuid_order = uuid4()
     order.order.phone = current_user
     order.order.id=uuid_order
-    # Order.order.customer.birthdate = datetime.now()
+    resp = await sesion_iiko.get_user(current_user, token)
+    balance = resp["walletBalances"][0]["balance"]
+    payment = next(filter(lambda payment: payment.paymentTypeKind == "IikoCard",order.order.payments), None)
+    if payment is not None:
+        if balance < payment.sum:
+            raise BadRequest(error="Баланс карты меньше заявленной суммы")
+        discount = payment.sum
+    else:
+        discount = 0
     await redis.con.set(str(uuid_order),order.json(),ex=1800)
-    response = await tinkoff.init_tinkoff(uuid_order,order.order.items)
+    response = await tinkoff.init_tinkoff(uuid_order,order.order.items,discount=0)
     return response
 
 @order_router.get(

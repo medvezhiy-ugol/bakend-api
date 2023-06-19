@@ -22,14 +22,35 @@ class IIko:
         self.url_create_draft = "api/1/deliveries/drafts/save"
         self.url_get_dfraft="api/1/deliveries/drafts/by_id"
         self.url_delete_draft="api/1/deliveries/drafts/delete"
-        
+        self.url_wallet_withdraw = "api/1/loyalty/iiko/customer/wallet/chargeoff"
+        self.url_refil_balance = "api/1/loyalty/iiko/customer/wallet/topup"
 
 
     def __new__(cls):
         if not hasattr(cls, "instance"):
             cls.instance = super(IIko, cls).__new__(cls)
         return cls.instance
-    
+    async def change_balance(self,token,wallet_id,customer_id,sum,organization_id, balance=True):
+        # if true when refil else withdraw
+        if balance:
+            url = self.url_base + self.url_refil_balance
+        else:
+            url = self.url_base + self.url_wallet_withdraw
+        headers = {"Authorization": f"Bearer {token}"}
+        data = {
+            "customerId": f"{customer_id}",
+            "walletId": f"{wallet_id}",
+            "sum": sum,
+            "comment": "string",
+            "organizationId": f"{organization_id}"
+        }
+        async with httpx.AsyncClient() as client:
+            response = await client.post(url, json=data, timeout=10.0, headers=headers)
+            if response.status_code != 200:
+                raise IIkoServerExeption(error=response.text)
+            resp = response.json()
+            return resp
+
     async def create_draft_iiko(self,token,data: OrderCreateDraft):
         url = self.url_base + self.url_create_draft
         headers = {"Authorization": f"Bearer {token}"}

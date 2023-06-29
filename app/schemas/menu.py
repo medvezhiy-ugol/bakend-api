@@ -139,7 +139,7 @@ class ItemModel(Document):
     taxCategory: taxCategoryModel | None
     orderItemType: str
     modifierSchemaId: Optional[NewUuid]
-    category_id: NewUuid
+    category_id: str
 
 
 class ItemCategorie(Document):

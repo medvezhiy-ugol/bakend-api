@@ -77,7 +77,7 @@ async def get_menu(
     responses={status.HTTP_404_NOT_FOUND: {"detail": "Продукт не найден"}},
 )
 async def get_product_from_menu(product_id: UUID = Query(...)):
-    product = await ItemModel.find(ItemModel.itemId == product_id).first_or_none()
+    product = await ItemModel.find(ItemModel.itemId == str(product_id),ItemModel.category_id != None).first_or_none()
     if product is None:
         raise ProductNotFoundException(error="Продукт не найден")
     return product

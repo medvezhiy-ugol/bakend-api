@@ -27,9 +27,9 @@ class DefaultSettings(BaseSettings):
 
     # Postgresql Settings
     DB_NAME: str = environ.get("DB_NAME", "medvezhiy-ugol")
-    DB_PATH: str = environ.get("DB_PATH", "db")
+    DB_PATH: str = environ.get("DB_PATH", "localhost")
     DB_USER: str = environ.get("DB_USER", "postgres")
-    DB_PORT: int = int(environ.get("DB_PORT", 5432))
+    DB_PORT: int = int(environ.get("DB_PORT", 6432))
     DB_PASSWORD: str = environ.get("DB_PASSWORD", "postgres")
     DB_POOL_SIZE: int = int(environ.get("DB_POOL_SIZE", 15))
     DB_CONNECT_RETRY: int = int(environ.get("DB_CONNECT_RETRY", 20))

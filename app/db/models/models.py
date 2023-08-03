@@ -57,9 +57,8 @@ class UserRoulette(DeclarativeBase):
     id = Column(UUID, unique=True, primary_key=True, default=lambda: str(uuid.uuid4()))
 
     user_id = Column(
-        "user_id",
-        UUID,
-        ForeignKey(Users.id, ondelete="CASCADE"),
+        "user_phone",
+        VARCHAR(25),
         nullable=False,
     )
 
@@ -74,4 +73,16 @@ class UserRoulette(DeclarativeBase):
         "is_winner",
         BOOLEAN,
         nullable=True,
+    )
+
+    wallet_id = Column(
+        "wallet_id",
+        UUID,
+        nullable=False
+    )
+
+    organization_id = Column(
+        "organization_id",
+        UUID,
+        nullable=False
     )

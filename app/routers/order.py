@@ -13,8 +13,11 @@ from app.db.connection import get_mongo_session
 from uuid import uuid4
 from app.IIko.Tinkoff import Tinkoff
 from app.schemas.exception import BadRequest
+from sqlalchemy.ext.asyncio import AsyncSession
+from app.db.connection import get_session
 import json
 from copy import deepcopy
+from app.query.roulette import add_user_to_roulette
 
 order_router = APIRouter(tags=["Orders"])
 
@@ -24,7 +27,8 @@ async def create_order(
     tinkoff: TinkoffRequest = Body(...),
     token: str = Depends(get_token_iiko),
     sesion_iiko: IIko = Depends(IIko),
-    redis: Redis = Depends(Redis)
+    redis: Redis = Depends(Redis),
+    session: AsyncSession = Depends(get_session)
 ):
 
     data = await redis.con.get(tinkoff.OrderId)
@@ -32,7 +36,7 @@ async def create_order(
         raise BadRequest(error="Заказ не принят")
     order = OrderCreate(**json.loads(data))
     user_phone = order.order.phone
-    
+
     resp = await sesion_iiko.get_user(user_phone, token)
     payment = next(filter(lambda payment: payment.paymentTypeKind == "IikoCard",order.order.payments), None)
     if payment is None:
@@ -41,8 +45,13 @@ async def create_order(
         discount = deepcopy(payment.sum)
         del(order.order.payments[1])
         resp = await sesion_iiko.change_balance(token,resp["walletBalances"][0]["id"],resp["id"],discount,order.organizationId,False)
+
     response = await sesion_iiko.create_order(token, data=order)
     await OrderResponse(**response, user_id=user_phone,id=response['orderInfo']['id']).save()
+
+    if response['orderInfo']['creationStatus'] == "InProgress":
+        await add_user_to_roulette(user_phone=resp['phone'], wallet_id=resp["walletBalances"][0]["id"], sum=order.order.payments[0].sum, organization_id=order.organizationId, session=session)
+
     return response
 
 
@@ -61,7 +70,7 @@ async def create_new_order(
     resp = await sesion_iiko.get_user(current_user, token)
     balance = resp["walletBalances"][0]["balance"]
     payment = next(filter(lambda payment: payment.paymentTypeKind == "IikoCard",order.order.payments), None)
-    if payment is not None:
+    if payment is not None: 
         if balance < payment.sum:
             raise BadRequest(error="Баланс карты меньше заявленной суммы")
         discount = payment.sum

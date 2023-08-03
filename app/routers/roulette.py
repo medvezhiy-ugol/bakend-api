@@ -1,5 +1,5 @@
 from fastapi import APIRouter, status, Depends, Form, Body
-from app.query.roulette import get_all_roulettes, create_roulette, get_user_won_roulettes
+import app.query.roulette as ruletki
 from app.schemas.roulette import RouletteInfo, RouletteCreateForm, UserRouletteInfo
 from app.db.connection import get_session
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -11,6 +11,8 @@ from app.schemas.auth import SuccessfulResponse
 from app.auth.oauth2 import get_current_user
 from app.query.auth import find_by_nickname
 from app.utils import serialize_models
+from app.db.models import Roulette, UserRoulette
+from app.IIko import get_token_iiko, IIko
 
 roulette_router = APIRouter(tags=["Roulette"])
 
@@ -42,11 +44,21 @@ async def add_new_roulette(
     return SuccessfulResponse()
 
 
-@roulette_router.get('/roulette/user_won_roulette/', response_model=list[UserRouletteInfo], status_code=status.HTTP_200_OK)
-async def won_user_roulettes(
+@roulette_router.get('/roulette/win')
+async def get_winner(
     session: AsyncSession = Depends(get_session),
-    current_user: str = Depends(get_current_user)
+    sesion_iiko: IIko = Depends(IIko),
+    token: str = Depends(get_token_iiko)
 ):
-    result = await find_by_nickname(current_user, session)
-    answer = await get_user_won_roulettes(result, session)
-    return serialize_models(answer, UserRouletteInfo)
+    winners = await ruletki.get_random_winner(session)
+    roulette = await ruletki.get_last_roulette(session)
+    await ruletki.process_winner(
+        users=winners,
+        sum=roulette.score,
+        winners_count=roulette.winners_count,
+        sesion_iiko=sesion_iiko,
+        token=token,
+        session=session
+    )
+
+    return SuccessfulResponse()

@@ -15,6 +15,14 @@ class RouletteInfo(BaseModel):
         orm_mode = True
 
 
+class RouletteWinner(BaseModel):
+    user_id: str
+    wallet_id: UUID
+
+    class Config:
+        orm_mode = True
+
+
 class UserRouletteInfo(BaseModel):
     id: UUID
     user_id: UUID

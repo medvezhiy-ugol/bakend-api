@@ -1,6 +1,6 @@
-from fastapi import APIRouter, status, Depends, Form, Body
+from fastapi import APIRouter, status, Depends, Form, Body, Path
 import app.query.roulette as ruletki
-from app.schemas.roulette import RouletteInfo, RouletteCreateForm, UserRouletteInfo
+from app.schemas.roulette import RouletteInfo, RouletteCreateForm, UserRouletteInfo, RouletteWinner
 from app.db.connection import get_session
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi_pagination.ext.async_sqlalchemy import paginate
@@ -13,6 +13,8 @@ from app.query.auth import find_by_nickname
 from app.utils import serialize_models
 from app.db.models import Roulette, UserRoulette
 from app.IIko import get_token_iiko, IIko
+
+from typing import List
 
 roulette_router = APIRouter(tags=["Roulette"])
 
@@ -43,7 +45,14 @@ async def add_new_roulette(
     )
     return SuccessfulResponse()
 
-
+@roulette_router.get("/roulette/{roulette_id}/winners", response_model=List[RouletteWinner])
+async def get_winners_by_roulette_id(
+    roulette_id: str = Path(...),
+    session: AsyncSession = Depends(get_session),
+    ):
+    result = await ruletki.get_winners_by_roulette_id(session, roulette_id)
+    return result
+    
 @roulette_router.get('/roulette/win')
 async def get_winner(
     session: AsyncSession = Depends(get_session),

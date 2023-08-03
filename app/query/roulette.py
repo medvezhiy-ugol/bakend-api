@@ -57,6 +57,15 @@ async def get_last_roulette(session):
     roulette: Roulette = roulettes.scalars().all()[-1]
     return roulette
 
+
+async def get_winners_by_roulette_id(session, roulette_id):
+    query = select(UserRoulette).where(
+        (UserRoulette.roulette_id == roulette_id) & (UserRoulette.is_winner == True)
+    )
+    winners: list[UserRoulette] = (await session.execute(query)).scalars().all()
+    return winners
+
+
 async def get_random_winner(session):
     roulette = await get_last_roulette(session)
     query = select(UserRoulette).where(UserRoulette.roulette_id == roulette.id)
@@ -72,6 +81,8 @@ async def process_winner(session, users: List[UserRoulette], sum, winners_count,
     winning_money = sum / winners_count
     for winner in users:
         resp = await sesion_iiko.get_user(winner.user_id, token)
+        query = update(UserRoulette).where(UserRoulette.id == winner.user_id).values(is_winner=True)
+        await session.execute(query)
         await sesion_iiko.change_balance(
             token, resp["walletBalances"][0]["id"], resp["id"], winning_money, winner.organization_id
         )

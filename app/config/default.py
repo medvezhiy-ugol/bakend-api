@@ -67,7 +67,11 @@ class DefaultSettings(BaseSettings):
     TINKOFF_TERMINAL: str
     URL_CONFIRM: str
 
+    # auth secrets
+    APPLE_PHONE: str
+    APPLE_CODE: str
 
+    
     @property
     def database_settings(self) -> dict:
         """
@@ -120,3 +124,5 @@ class DefaultSettings(BaseSettings):
                 port=self.MG_PORT,
             )
         )
+    
+settings_just = DefaultSettings()

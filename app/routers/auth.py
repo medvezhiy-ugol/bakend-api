@@ -10,6 +10,7 @@ from app.schemas.exception import IncorrectCodeException, TimeOutCodeException, 
 import random
 from app.IIko import IIko
 from fastapi_jwt_auth import AuthJWT
+from app.config.default import settings_just
 
 registr_router = APIRouter(tags=["Authorization"])
 
@@ -32,8 +33,9 @@ async def login(
     token_iiko: str = Depends(get_token_iiko),
 ) -> SuccessfulResponse:
     code = str(random.randint(1000, 9999))
-    await redis.set_code_phone(phone=phone.phone, code=code)
-    await sesion_iiko.send_sms(token_iiko, phone.phone, code, "0915d8a9-4ca7-495f-a75c-1ce684424781")
+    if phone.phone != settings_just.APPLE_PHONE:
+        await redis.set_code_phone(phone=phone.phone, code=code)
+        await sesion_iiko.send_sms(token_iiko, phone.phone, code, "0915d8a9-4ca7-495f-a75c-1ce684424781")
     return SuccessfulResponse()
 
 
@@ -50,12 +52,12 @@ async def verify_phone(creds: AuthUserCode = Body(),
                        Authorize: AuthJWT = Depends(),
                        sesion_iiko: IIko = Depends(IIko),
                        token: str = Depends(get_token_iiko)):
-
-    check = await redis.get_code_phone(phone=creds.phone)
-    if check is None:
-        raise TimeOutCodeException(error="Время истекло")
-    if check != creds.code:
-        raise IncorrectCodeException(error="Код не верен")
+    if creds.phone != settings_just.APPLE_PHONE:
+        check = await redis.get_code_phone(phone=creds.phone)
+        if check is None:
+            raise TimeOutCodeException(error="Время истекло")
+        if check != creds.code:
+            raise IncorrectCodeException(error="Код не верен")
     resp = await sesion_iiko.get_user(creds.phone, token)
     if resp is None:
         code_for_name_user = str(random.randint(1, 9999999))

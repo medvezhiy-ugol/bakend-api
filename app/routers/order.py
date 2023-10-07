@@ -42,6 +42,7 @@ async def create_order(
         del(order.order.payments[1])
         resp = await sesion_iiko.change_balance(token,resp["walletBalances"][0]["id"],resp["id"],discount,order.organizationId,False)
     response = await sesion_iiko.create_order(token, data=order)
+    response['orderInfo']['order'] = order.order
     await OrderResponse(**response, user_id=user_phone,id=response['orderInfo']['id']).save()
     return response
 

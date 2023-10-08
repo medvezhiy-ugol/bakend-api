@@ -12,7 +12,7 @@ engine = create_engine(get_settings().database_uri)
 
 
 @app.task
-def create_new_roulette(*args):
+def create_new_roulette():
     global counter, engine
     counter += 1
     with Session(engine) as session:
@@ -26,10 +26,13 @@ def create_new_roulette(*args):
         session.add(new_roulette)
         session.commit()
 
+@app.task
+def test():
+    print("Hello world!!!")
 
 app.conf.beat_schedule = {
     'add-every-30-seconds': {
-        'task': 'worker.commands.create_new_roulette',
+        'task': 'tasks.test',
         'schedule': 15.0,
     },
 }

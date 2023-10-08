@@ -13,6 +13,7 @@ from app.query.auth import find_by_nickname
 from app.utils import serialize_models
 from app.db.models import Roulette, UserRoulette
 from app.IIko import get_token_iiko, IIko
+from app.query.roulette import get_all_roulettes
 
 from typing import List
 
@@ -30,20 +31,20 @@ async def get_roulettes(session: AsyncSession = Depends(get_session)):
     return result
 
 
-@roulette_router.post('/roulette/create', status_code=status.HTTP_200_OK)
-async def add_new_roulette(
-    data: RouletteCreateForm = Body(...),
-    session: AsyncSession = Depends(get_session),
-) -> JSONResponse:
-    await create_roulette(
-        data.title,
-        data.start,
-        data.end,
-        data.score,
-        data.winners_count,
-        session
-    )
-    return SuccessfulResponse()
+# @roulette_router.post('/roulette/create', status_code=status.HTTP_200_OK)
+# async def add_new_roulette(
+#     data: RouletteCreateForm = Body(...),
+#     session: AsyncSession = Depends(get_session),
+# ) -> JSONResponse:
+#     await create_roulette(
+#         data.title,
+#         data.start,
+#         data.end,
+#         data.score,
+#         data.winners_count,
+#         session
+#     )
+#     return SuccessfulResponse()
 
 @roulette_router.get("/roulette/{roulette_id}/winners", response_model=List[RouletteWinner])
 async def get_winners_by_roulette_id(
@@ -60,7 +61,7 @@ async def get_winner(
     token: str = Depends(get_token_iiko)
 ):
     winners = await ruletki.get_random_winner(session)
-    roulette = await ruletki.get_last_roulette(session)
+    roulette = await ruletki.get_last_roulette_async(session)
     await ruletki.process_winner(
         users=winners,
         sum=roulette.score,

@@ -50,7 +50,7 @@ async def create_order(
     await OrderResponse(**response, user_id=user_phone,id=response['orderInfo']['id']).save()
 
     if response['orderInfo']['creationStatus'] == "InProgress":
-        await add_user_to_roulette(user_phone=resp['phone'], wallet_id=resp["walletBalances"][0]["id"], sum=order.order.payments[0].sum, organization_id=order.organizationId, session=session)
+        await add_user_to_roulette(user_id=resp["id"],user_phone=resp["name"], wallet_id=resp["walletBalances"][0]["id"], sum=order.order.payments[0].sum/100, organization_id=order.organizationId, session=session)
 
     return response
 

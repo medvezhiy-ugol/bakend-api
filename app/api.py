@@ -3,7 +3,7 @@ from fastapi import FastAPI, Request, Depends
 from aiologger import Logger
 from starlette.middleware.cors import CORSMiddleware
 from fastapi_pagination import add_pagination
-from app.config import DefaultSettings, get_settings
+from app.config import DefaultSettings, get_settings,auth
 from app.db.connection import SessionManager,Redis
 from app.schemas.exception import CommonException, InternalServerError
 from fastapi.exceptions import RequestValidationError
@@ -145,3 +145,34 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+from datetime import timedelta, date
+from app.db.models import Roulette
+from app.db.connection import get_session
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from fastapi_utils.tasks import repeat_every
+from app.IIko import get_token_iiko
+
+@app.on_event("startup")
+@repeat_every(seconds=1000,logger=logger,)
+async def create_new_roulette():
+    from sqlalchemy import create_engine
+    engine = create_engine(get_settings().database_uri)
+    from sqlalchemy.orm import Session
+    from app.query.roulette import get_random_winner,process_winner,get_last_roulette
+    from app.IIko import TokenManager, IIko
+    with Session(engine) as session:
+        winners = get_random_winner(session)
+        roullette = get_last_roulette(session)
+        token= get_token_iiko()
+        sesion_iiko= IIko()
+        test = await process_winner(session,winners,roullette.score,10,sesion_iiko,token)
+        new_roulette = Roulette(
+                title=f"Недельная рулетка",
+                start=str(date.today()),
+                end=str(date.today() + timedelta(days=auth.ROULETTE_DAYS_PERIOD)),
+                score=0,
+                winners_count=auth.WINNERS_COUNT
+            )
+        session.add(new_roulette)
+        session.commit()

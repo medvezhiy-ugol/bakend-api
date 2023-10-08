@@ -1,4 +1,5 @@
 import httpx
+import requests
 from time import perf_counter
 from app.schemas.exception import IIkoServerExeption
 import asyncio
@@ -16,8 +17,7 @@ class TokenManager:
         self.url_iiko = "https://api-ru.iiko.services/"
         self.url_token = "api/1/access_token"
         self.api_login = settings.API_LOGIN
-        self.loop = asyncio.new_event_loop()
-        self.loop.run_until_complete(self.refresh())
+        self.refresh()
 
     def __new__(cls):
         if not hasattr(cls, "instance"):
@@ -26,12 +26,11 @@ class TokenManager:
 
     def get_token(self):
         if perf_counter() - self.time_create >= 40 * 10000:
-            self.loop.run_until_complete(self.refresh())
+            self.refresh()
         return self.token
 
-    async def refresh(self) -> None:
-        async with httpx.AsyncClient() as client:
-            response = await client.post(
+    def refresh(self) -> None:
+            response = requests.post(
                 self.url_iiko + self.url_token,
                 json={"apiLogin": self.api_login},
                 timeout=10.0,

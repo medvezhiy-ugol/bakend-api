@@ -1,4 +1,4 @@
-from app.IIko.TokenManager import get_token_iiko
+from app.IIko.TokenManager import get_token_iiko, TokenManager
 from app.IIko.IIko import IIko
 
 

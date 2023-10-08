@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, status, Body, Query
+from fastapi import APIRouter, Depends, status, Body, Path
 from app.IIko import get_token_iiko, IIko
 from app.schemas.combo import ComboCredits, Combo, ComboCategorie, Group
 from app.schemas.exception import ComboNotFoundException
@@ -43,7 +43,7 @@ async def get_menu():
     response_model= Group,
 )
 async def get_menu(
-    combo_id: UUID = Query(...)
+    combo_id: UUID = Path(...)
 ):
     group = Group.get(combo_id)
     if not group:

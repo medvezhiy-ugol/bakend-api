@@ -28,8 +28,7 @@ services:
         - POSTGRES_PASSWORD=postgres
     restart: always
     container_name: "db"
-    networks:
-      - med-ugol
+
   web:
     build:
       context: .
